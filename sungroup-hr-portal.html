@@ -1522,18 +1522,19 @@ const mockApplicants = realApplicantsData;
 // ===== โหลดผู้สมัครจาก Supabase =====
 async function loadApplicants() {
   const db = getDB();
-  if (!db) return [...mockApplicants];
+  if (!db) return applyLocalOverrides([...mockApplicants]);
   try {
     const { data, error } = await db
       .from('applicants')
       .select('*')
       .order('id', { ascending: false });
-    if (error) return [...mockApplicants];
+    if (error) return applyLocalOverrides([...mockApplicants]);
     const real = mapApplicants(data || []);
-    return real.length > 0 ? [...real, ...mockApplicants] : [...mockApplicants];
+    const combined = real.length > 0 ? [...real, ...mockApplicants] : [...mockApplicants];
+    return applyLocalOverrides(combined);
   } catch(e) {
     // network error หรือ Supabase ไม่พร้อม — ใช้ mock data แทนเงียบๆ
-    return [...mockApplicants];
+    return applyLocalOverrides([...mockApplicants]);
   }
 }
 
@@ -1759,6 +1760,14 @@ function goPage(id, el) {
   el.classList.add('active');
   const titles = { dashboard:'📊 Dashboard ภาพรวม', table:'📋 รายชื่อผู้สมัครทั้งหมด', analysis:'⬡ วิเคราะห์ทักษะผู้สมัคร', jobs:'💼 จัดการตำแหน่งงาน' };
   document.getElementById('page-title').textContent = titles[id] || '';
+  if (id === 'table') {
+    tableFilter = 'all';
+    document.querySelectorAll('#filter-chips .chip').forEach(b => b.classList.remove('active'));
+    const allChip = document.querySelector('#filter-chips .chip');
+    if (allChip) allChip.classList.add('active');
+    renderTable();
+  }
+  if (id === 'analysis') renderHexGrid();
   if (id === 'jobs') renderJobsTable();
 }
 
@@ -1848,14 +1857,36 @@ function formatThaiDate(d) {
   return dt.toLocaleDateString('th-TH', { day:'numeric', month:'short', year:'2-digit' });
 }
 
+// ===== LOCAL STORAGE HELPERS =====
+const LS_KEY = 'sungroup_applicant_overrides';
+function loadLocalOverrides() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveLocalOverride(appId, patch) {
+  const overrides = loadLocalOverrides();
+  overrides[appId] = Object.assign(overrides[appId] || {}, patch);
+  localStorage.setItem(LS_KEY, JSON.stringify(overrides));
+}
+function applyLocalOverrides(list) {
+  const overrides = loadLocalOverrides();
+  return list.map(a => {
+    const ov = overrides[a.id];
+    return ov ? Object.assign({}, a, ov) : a;
+  });
+}
+
 function setInterviewDate(idx, val) {
   applicants[idx].interviewDate = val;
   const db = getDB();
   if (db && applicants[idx]._dbid) {
-    db.from('applicants').update({ interview_date: val }).eq('id', applicants[idx]._dbid);
+    db.from('applicants').update({ interview_date: val }).eq('id', applicants[idx]._dbid)
+      .then(({error}) => { if(error) console.warn('Supabase date error', error.message); });
+  } else {
+    saveLocalOverride(applicants[idx].id, { interviewDate: val });
   }
   const formatted = formatThaiDate(val);
   showToast('📅', `กำหนดวันสัมภาษณ์ ${applicants[idx].name}: ${formatted}`);
+  renderTable();
 }
 
 function chipFilter(status, btn) {
@@ -1968,6 +1999,8 @@ function setVerdict(idx, status) {
   if (db && applicants[idx]._dbid) {
     db.from('applicants').update({ status }).eq('id', applicants[idx]._dbid)
       .then(({error}) => { if(error) console.warn('update error', error.message); });
+  } else {
+    saveLocalOverride(applicants[idx].id, { status });
   }
   renderTable();
   const v = document.getElementById(`verdict-${idx}`);
