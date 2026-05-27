@@ -1091,32 +1091,6 @@
             <label style="font-size:12px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">จังหวัด <span style="color:var(--gray-400);font-weight:400">(ไม่บังคับ)</span></label>
             <select id="mf-province" style="width:100%;padding:11px 14px;border:2px solid var(--gray-200);border-radius:10px;font-family:Sarabun,sans-serif;font-size:13px;outline:none;background:white;">
               <option value="">-- เลือกจังหวัด --</option>
-              <option>กรุงเทพมหานคร</option><option>กระบี่</option><option>กาญจนบุรี</option>
-              <option>กาฬสินธุ์</option><option>กำแพงเพชร</option><option>ขอนแก่น</option>
-              <option>จันทบุรี</option><option>ฉะเชิงเทรา</option><option>ชลบุรี</option>
-              <option>ชัยนาท</option><option>ชัยภูมิ</option><option>ชุมพร</option>
-              <option>เชียงราย</option><option>เชียงใหม่</option><option>ตรัง</option>
-              <option>ตราด</option><option>ตาก</option><option>นครนายก</option>
-              <option>นครปฐม</option><option>นครพนม</option><option>นครราชสีมา</option>
-              <option>นครศรีธรรมราช</option><option>นครสวรรค์</option><option>นนทบุรี</option>
-              <option>นราธิวาส</option><option>น่าน</option><option>บึงกาฬ</option>
-              <option>บุรีรัมย์</option><option>ปทุมธานี</option><option>ประจวบคีรีขันธ์</option>
-              <option>ปราจีนบุรี</option><option>ปัตตานี</option><option>พระนครศรีอยุธยา</option>
-              <option>พะเยา</option><option>พังงา</option><option>พัทลุง</option>
-              <option>พิจิตร</option><option>พิษณุโลก</option><option>เพชรบุรี</option>
-              <option>เพชรบูรณ์</option><option>แพร่</option><option>ภูเก็ต</option>
-              <option>มหาสารคาม</option><option>มุกดาหาร</option><option>แม่ฮ่องสอน</option>
-              <option>ยโสธร</option><option>ยะลา</option><option>ร้อยเอ็ด</option>
-              <option>ระนอง</option><option>ระยอง</option><option>ราชบุรี</option>
-              <option>ลพบุรี</option><option>ลำปาง</option><option>ลำพูน</option>
-              <option>เลย</option><option>ศรีสะเกษ</option><option>สกลนคร</option>
-              <option>สงขลา</option><option>สตูล</option><option>สมุทรปราการ</option>
-              <option>สมุทรสงคราม</option><option>สมุทรสาคร</option><option>สระแก้ว</option>
-              <option>สระบุรี</option><option>สิงห์บุรี</option><option>สุโขทัย</option>
-              <option>สุพรรณบุรี</option><option>สุราษฎร์ธานี</option><option>สุรินทร์</option>
-              <option>หนองคาย</option><option>หนองบัวลำภู</option><option>อ่างทอง</option>
-              <option>อำนาจเจริญ</option><option>อุดรธานี</option><option>อุตรดิตถ์</option>
-              <option>อุทัยธานี</option><option>อุบลราชธานี</option>
             </select>
           </div>
           <div style="display:flex;align-items:center;gap:20px;padding-top:8px;">
@@ -2335,160 +2309,172 @@ function exportExcel() {
 }
 
 
-// ===== DEFAULT JOBS DATA =====
-const defaultJobs = [
-  { title:'เจ้าหน้าที่ R&D Process Meat',      count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['R&D','อาหาร'],              group:'วิจัย',        province:'นครปฐม',        urgent:false, active:true },
-  { title:'วิศวกรไฟฟ้า (โรงชำแหละ)',           count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['วิศวกรรม','ไฟฟ้า'],         group:'วิศวกรรม',     province:'นครปฐม',        urgent:false, active:true },
-  { title:'วิศวกรเครื่องกล (โรงชำแหละ)',        count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['วิศวกรรม','เครื่องกล'],     group:'วิศวกรรม',     province:'นครปฐม',        urgent:false, active:true },
-  { title:'วิศวกรอุตสาหการ',                   count:2,  company:'ซันฟีด',                     tags:['วิศวกรรม','อุตสาหการ'],     group:'วิศวกรรม',     province:'นครปฐม',        urgent:false, active:true },
-  { title:'เจ้าหน้าที่บัญชี',                  count:2,  company:'SUNGROUP กรุงเทพฯ',           tags:['บัญชี','ด่วน!'],            group:'บัญชี',        province:'กรุงเทพมหานคร', urgent:true,  active:true },
-  { title:'ผู้จัดการแผนกบัญชี',                count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['บัญชี','ผู้บริหาร'],        group:'บัญชี',        province:'นครปฐม',        urgent:false, active:true },
-  { title:'เจ้าหน้าที่ขายต่างประเทศ',          count:3,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ขาย','ต่างประเทศ'],         group:'การขาย',       province:'นครปฐม',        urgent:false, active:true },
-  { title:'เจ้าหน้าที่ขายอาหารสัตว์',          count:6,  company:'ซันฟีด',                     tags:['ขาย','อาหารสัตว์'],         group:'การขาย',       province:'นครปฐม',        urgent:false, active:true },
-  { title:'สัตวแพทย์ควบคุมฟาร์ม',              count:5,  company:'ซันฟาร์ม',                   tags:['สัตวแพทย์','ฟาร์ม'],        group:'ฟาร์ม',        province:'นครปฐม',        urgent:false, active:true },
-  { title:'สัตวบาลประจำฟาร์ม',                 count:20, company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['สัตวบาล','ฟาร์ม'],          group:'ฟาร์ม',        province:'นครปฐม',        urgent:false, active:true },
-  { title:'เจ้าหน้าที่ประกันคุณภาพ (QA)',      count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['QA','คุณภาพ'],              group:'QA/QC',        province:'นครปฐม',        urgent:false, active:true },
-  { title:'Safety Officer (จป.วิชาชีพ)',        count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ความปลอดภัย','จป.'],        group:'ความปลอดภัย',  province:'นครปฐม',        urgent:false, active:true },
-  { title:'เจ้าหน้าที่ Oracle Developer',       count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['IT','Oracle','Database'],   group:'ICT/IT',       province:'นครปฐม',        urgent:false, active:true },
-  { title:'เจ้าหน้าที่บุคคล (ภาษาพม่า)',       count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['HR','พม่า'],                group:'HR',           province:'นครปฐม',        urgent:false, active:true },
-  { title:'เจ้าหน้าที่จัดซื้อ',               count:1,  company:'SUNGROUP กรุงเทพฯ',           tags:['จัดซื้อ','โลจิสติก'],       group:'จัดซื้อ',      province:'กรุงเทพมหานคร', urgent:false, active:true },
-  { title:'ผู้จัดการแผนกฟาร์ม',               count:5,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ผู้บริหาร','ฟาร์ม'],        group:'ฟาร์ม',        province:'นครปฐม',        urgent:false, active:true },
+// ===== JOBS MANAGEMENT =====
+// ข้อมูลตั้งต้น — ใช้ seed ครั้งแรกเท่านั้น
+const DEFAULT_JOBS = [
+  { title:'เจ้าหน้าที่ R&D Process Meat',    company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'วิจัย',       province:'นครปฐม',        tags:['R&D','อาหาร'],           count:1,  urgent:false, active:true },
+  { title:'วิศวกรไฟฟ้า (โรงชำแหละ)',         company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'วิศวกรรม',    province:'นครปฐม',        tags:['วิศวกรรม','ไฟฟ้า'],      count:2,  urgent:false, active:true },
+  { title:'วิศวกรเครื่องกล (โรงชำแหละ)',      company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'วิศวกรรม',    province:'นครปฐม',        tags:['วิศวกรรม','เครื่องกล'],  count:1,  urgent:false, active:true },
+  { title:'วิศวกรอุตสาหการ',                 company:'ซันฟีด',                     group:'วิศวกรรม',    province:'นครปฐม',        tags:['วิศวกรรม','อุตสาหการ'], count:2,  urgent:false, active:true },
+  { title:'เจ้าหน้าที่บัญชี',                company:'SUNGROUP กรุงเทพฯ',           group:'บัญชี',       province:'กรุงเทพมหานคร', tags:['บัญชี','ด่วน!'],         count:2,  urgent:true,  active:true },
+  { title:'ผู้จัดการแผนกบัญชี',              company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'บัญชี',       province:'นครปฐม',        tags:['บัญชี','ผู้บริหาร'],     count:2,  urgent:false, active:true },
+  { title:'เจ้าหน้าที่ขายต่างประเทศ',        company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'การขาย',      province:'นครปฐม',        tags:['ขาย','ต่างประเทศ'],      count:3,  urgent:false, active:true },
+  { title:'เจ้าหน้าที่ขายอาหารสัตว์',        company:'ซันฟีด',                     group:'การขาย',      province:'นครปฐม',        tags:['ขาย','อาหารสัตว์'],      count:6,  urgent:false, active:true },
+  { title:'สัตวแพทย์ควบคุมฟาร์ม',            company:'ซันฟาร์ม',                   group:'ฟาร์ม',       province:'นครปฐม',        tags:['สัตวแพทย์','ฟาร์ม'],     count:5,  urgent:false, active:true },
+  { title:'สัตวบาลประจำฟาร์ม',               company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'ฟาร์ม',       province:'นครปฐม',        tags:['สัตวบาล','ฟาร์ม'],       count:20, urgent:false, active:true },
+  { title:'เจ้าหน้าที่ประกันคุณภาพ (QA)',    company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'QA/QC',       province:'นครปฐม',        tags:['QA','คุณภาพ'],           count:2,  urgent:false, active:true },
+  { title:'Safety Officer (จป.วิชาชีพ)',      company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'ความปลอดภัย', province:'นครปฐม',        tags:['ความปลอดภัย','จป.'],     count:1,  urgent:false, active:true },
+  { title:'เจ้าหน้าที่ Oracle Developer',     company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'ICT/IT',      province:'นครปฐม',        tags:['IT','Oracle'],           count:1,  urgent:false, active:true },
+  { title:'เจ้าหน้าที่บุคคล (ภาษาพม่า)',     company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'HR',          province:'นครปฐม',        tags:['HR','พม่า'],             count:1,  urgent:false, active:true },
+  { title:'เจ้าหน้าที่จัดซื้อ',             company:'SUNGROUP กรุงเทพฯ',           group:'จัดซื้อ',     province:'กรุงเทพมหานคร', tags:['จัดซื้อ','โลจิสติก'],    count:1,  urgent:false, active:true },
+  { title:'ผู้จัดการแผนกฟาร์ม',             company:'ซันฟู้ด อินเตอร์เนชั่นแนล', group:'ฟาร์ม',       province:'นครปฐม',        tags:['ผู้บริหาร','ฟาร์ม'],     count:5,  urgent:false, active:true },
 ];
 
-async function loadJobs() {
-  const db = getDB();
-  if (!db) return defaultJobs.map(j => ({ ...j, _dbid: null }));
-  try {
-    const { data, error } = await db
-      .from('jobs')
-      .select('*')
-      .order('id', { ascending: true });
-
-    // ถ้า Supabase ว่าง → seed defaultJobs เข้าไปเลย
-    if (!error && (!data || data.length === 0)) {
-      const toInsert = defaultJobs.map(j => ({
-        title: j.title, company: j.company, group: j.group,
-        count: j.count, tags: j.tags, province: j.province || '',
-        urgent: j.urgent, active: j.active
-      }));
-      const { data: inserted } = await db.from('jobs').insert(toInsert).select();
-      if (inserted) {
-        return inserted.map(j => ({
-          _dbid: j.id,
-          title: j.title, company: j.company, group: j.group,
-          count: j.count, tags: j.tags || [], province: j.province || '',
-          urgent: j.urgent, active: j.active
-        }));
-      }
-    }
-
-    if (error || !data) return defaultJobs.map(j => ({ ...j, _dbid: null }));
-    return data.map(j => ({
-      _dbid: j.id,
-      title: j.title, company: j.company, group: j.group,
-      count: j.count, tags: j.tags || [], province: j.province || '',
-      urgent: j.urgent, active: j.active
-    }));
-  } catch(e) { return defaultJobs.map(j => ({ ...j, _dbid: null })); }
+// แปลง row จาก Supabase → object ที่ใช้ใน app
+function mapJob(r) {
+  return {
+    _dbid:    r.id,
+    title:    r.title    || '',
+    company:  r.company  || '',
+    group:    r.group    || '',
+    province: r.province || '',
+    tags:     Array.isArray(r.tags) ? r.tags : [],
+    count:    r.count    || 1,
+    urgent:   !!r.urgent,
+    active:   !!r.active,
+  };
 }
 
-
-let jobsList = defaultJobs; // จะถูกอัปเดตจาก Supabase ใน init()
+let jobsList = [];
 let jobGroupFilter = 'all';
 
-async function syncJobsToApplicantSite() {
-  const activeCount = jobsList.filter(j=>j.active).length;
-  const el = document.getElementById('nb-jobs');
-  if (el) el.textContent = activeCount;
+// โหลดจาก Supabase — ถ้าว่าง seed DEFAULT_JOBS ก่อน
+async function loadJobs() {
+  const db = getDB();
+  if (!db) return DEFAULT_JOBS.map(j => ({ ...j, _dbid: null }));
+  try {
+    const { data, error } = await db.from('jobs').select('*').order('id', { ascending: true });
+    if (error) { console.warn('loadJobs error:', error.message); return DEFAULT_JOBS.map(j => ({ ...j, _dbid: null })); }
+    if (!data || data.length === 0) {
+      // Seed ข้อมูลตั้งต้นเข้า Supabase
+      const { data: seeded, error: seedErr } = await db.from('jobs').insert(DEFAULT_JOBS).select();
+      if (seedErr) { console.warn('seed error:', seedErr.message); return DEFAULT_JOBS.map(j => ({ ...j, _dbid: null })); }
+      return (seeded || []).map(mapJob);
+    }
+    return data.map(mapJob);
+  } catch (e) {
+    console.warn('loadJobs error:', e.message || String(e));
+    return DEFAULT_JOBS.map(j => ({ ...j, _dbid: null }));
+  }
 }
 
+// อัปเดต badge จำนวนตำแหน่ง
+function syncJobBadge() {
+  const el = document.getElementById('nb-jobs');
+  if (el) el.textContent = jobsList.filter(j => j.active).length;
+}
+
+// Render ตาราง
 function renderJobsTable() {
-  const q = (document.getElementById('job-search')?.value || '').toLowerCase();
+  const q     = (document.getElementById('job-search')?.value || '').toLowerCase();
   const tbody = document.getElementById('jobs-mgmt-body');
   if (!tbody) return;
 
-  const filtered = jobsList.filter((j,i) => {
+  const rows = jobsList.filter(j => {
     const matchGroup = jobGroupFilter === 'all' || j.group === jobGroupFilter;
-    const matchQ = !q || j.title.toLowerCase().includes(q) || j.company.toLowerCase().includes(q) || j.group.toLowerCase().includes(q);
+    const matchQ = !q || [j.title, j.company, j.group, j.province].some(v => v.toLowerCase().includes(q));
     return matchGroup && matchQ;
   });
 
-  tbody.innerHTML = filtered.map((j, fi) => {
-    const realIdx = jobsList.indexOf(j);
+  tbody.innerHTML = rows.length ? rows.map((j, i) => {
+    const idx = jobsList.indexOf(j);
     return `<tr>
-      <td style="color:var(--gray-400);font-size:12px;text-align:center">${realIdx+1}</td>
+      <td style="color:var(--gray-400);font-size:12px;text-align:center">${idx + 1}</td>
       <td>
         <div style="font-weight:700;font-size:13px;color:var(--gray-800)">${j.title}</div>
-        <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${j.tags.map(t=>`<span style="background:var(--gray-100);padding:1px 7px;border-radius:8px;margin-right:4px;font-size:10px">${t}</span>`).join('')}</div>
+        <div style="margin-top:3px">${j.tags.map(t => `<span style="background:var(--gray-100);padding:1px 7px;border-radius:8px;margin-right:3px;font-size:10px">${t}</span>`).join('')}</div>
       </td>
       <td style="font-size:12px;color:var(--gray-600)">${j.company}</td>
       <td><span style="font-size:11px;background:var(--red-light);color:var(--red);padding:3px 10px;border-radius:10px;font-weight:600">${j.group}</span></td>
-      <td style="font-size:12px;color:var(--gray-600)">${j.province ? `<span style="display:flex;align-items:center;gap:4px">📍 ${j.province}</span>` : '<span style="color:var(--gray-200)">—</span>'}</td>
-      <td style="text-align:center;font-weight:700;font-size:14px;color:var(--gray-800)">${j.count}</td>
-      <td style="text-align:center"><span class="${j.active?'job-status-on':'job-status-off'}">${j.active?'เปิดรับ':'ปิด'}</span></td>
-      <td style="text-align:center">${j.urgent?'<span class="urgent-dot" title="ตำแหน่งด่วน"></span>':'<span style="color:var(--gray-200)">—</span>'}</td>
+      <td style="font-size:12px;color:var(--gray-600)">${j.province ? `📍 ${j.province}` : '<span style="color:var(--gray-200)">—</span>'}</td>
+      <td style="text-align:center;font-weight:700;font-size:14px">${j.count}</td>
+      <td style="text-align:center"><span class="${j.active ? 'job-status-on' : 'job-status-off'}">${j.active ? 'เปิดรับ' : 'ปิด'}</span></td>
+      <td style="text-align:center">${j.urgent ? '<span class="urgent-dot"></span>' : '<span style="color:var(--gray-200)">—</span>'}</td>
       <td style="text-align:center">
         <div style="display:flex;gap:4px;justify-content:center">
-          <button class="btn-edit" onclick="openJobModal(${realIdx})">✏️ แก้ไข</button>
-          <button class="btn-toggle ${j.active?'':'off'}" onclick="toggleJob(${realIdx})">${j.active?'🔴 ปิด':'🟢 เปิด'}</button>
-          <button class="btn-del" onclick="deleteJob(${realIdx})">🗑️</button>
+          <button class="btn-edit"   onclick="openJobModal(${idx})">✏️ แก้ไข</button>
+          <button class="btn-toggle ${j.active ? '' : 'off'}" onclick="toggleJob(${idx})">${j.active ? '🔴 ปิด' : '🟢 เปิด'}</button>
+          <button class="btn-del"    onclick="deleteJob(${idx})">🗑️</button>
         </div>
       </td>
     </tr>`;
-  }).join('') || `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--gray-400)">ไม่พบตำแหน่งที่ค้นหา</td></tr>`;
+  }).join('') : `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--gray-400)">ไม่พบตำแหน่งที่ค้นหา</td></tr>`;
 
   // Stats bar
   const statsEl = document.getElementById('jobs-stats-bar');
   if (statsEl) {
-    const total = jobsList.length;
-    const active = jobsList.filter(j=>j.active).length;
-    const urgent = jobsList.filter(j=>j.urgent).length;
-    const totalSlots = jobsList.filter(j=>j.active).reduce((s,j)=>s+j.count,0);
+    const total  = jobsList.length;
+    const active = jobsList.filter(j => j.active).length;
+    const urgent = jobsList.filter(j => j.urgent).length;
+    const slots  = jobsList.filter(j => j.active).reduce((s, j) => s + j.count, 0);
     statsEl.innerHTML = [
-      {icon:'📋',label:'ตำแหน่งทั้งหมด',val:total,bg:'var(--gray-100)',col:'var(--gray-800)'},
-      {icon:'🟢',label:'เปิดรับสมัคร',val:active,bg:'#D1FAE5',col:'#065F46'},
-      {icon:'🔴',label:'ปิดรับสมัคร',val:total-active,bg:'#FEE2E2',col:'#991B1B'},
-      {icon:'⚡',label:'ตำแหน่งด่วน',val:urgent,bg:'#FEF3C7',col:'#92400E'},
-      {icon:'👥',label:'อัตราเปิดรับรวม',val:totalSlots+' อัตรา',bg:'var(--red-light)',col:'var(--red)'},
-    ].map(s=>`<div style="background:${s.bg};border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:10px;flex:1;min-width:120px">
+      { icon:'📋', label:'ตำแหน่งทั้งหมด',   val: total,          bg:'var(--gray-100)', col:'var(--gray-800)' },
+      { icon:'🟢', label:'เปิดรับสมัคร',      val: active,         bg:'#D1FAE5',         col:'#065F46' },
+      { icon:'🔴', label:'ปิดรับสมัคร',       val: total - active, bg:'#FEE2E2',         col:'#991B1B' },
+      { icon:'⚡', label:'ตำแหน่งด่วน',       val: urgent,         bg:'#FEF3C7',         col:'#92400E' },
+      { icon:'👥', label:'อัตราเปิดรับรวม',   val: slots + ' อัตรา', bg:'var(--red-light)', col:'var(--red)' },
+    ].map(s => `<div style="background:${s.bg};border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:10px;flex:1;min-width:120px">
       <span style="font-size:22px">${s.icon}</span>
-      <div><div style="font-family:'Prompt',sans-serif;font-size:22px;font-weight:800;color:${s.col};line-height:1">${s.val}</div><div style="font-size:11px;color:${s.col};opacity:0.8">${s.label}</div></div>
+      <div>
+        <div style="font-family:'Prompt',sans-serif;font-size:22px;font-weight:800;color:${s.col};line-height:1">${s.val}</div>
+        <div style="font-size:11px;color:${s.col};opacity:0.8">${s.label}</div>
+      </div>
     </div>`).join('');
   }
 }
 
 function jobChip(group, btn) {
   jobGroupFilter = group;
-  document.querySelectorAll('#page-jobs .chip').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#page-jobs .chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderJobsTable();
 }
 
 // ===== MODAL =====
+const PROVINCES = ['กรุงเทพมหานคร','กระบี่','กาญจนบุรี','กาฬสินธุ์','กำแพงเพชร','ขอนแก่น','จันทบุรี','ฉะเชิงเทรา','ชลบุรี','ชัยนาท','ชัยภูมิ','ชุมพร','เชียงราย','เชียงใหม่','ตรัง','ตราด','ตาก','นครนายก','นครปฐม','นครพนม','นครราชสีมา','นครศรีธรรมราช','นครสวรรค์','นนทบุรี','นราธิวาส','น่าน','บึงกาฬ','บุรีรัมย์','ปทุมธานี','ประจวบคีรีขันธ์','ปราจีนบุรี','ปัตตานี','พระนครศรีอยุธยา','พะเยา','พังงา','พัทลุง','พิจิตร','พิษณุโลก','เพชรบุรี','เพชรบูรณ์','แพร่','ภูเก็ต','มหาสารคาม','มุกดาหาร','แม่ฮ่องสอน','ยโสธร','ยะลา','ร้อยเอ็ด','ระนอง','ระยอง','ราชบุรี','ลพบุรี','ลำปาง','ลำพูน','เลย','ศรีสะเกษ','สกลนคร','สงขลา','สตูล','สมุทรปราการ','สมุทรสงคราม','สมุทรสาคร','สระแก้ว','สระบุรี','สิงห์บุรี','สุโขทัย','สุพรรณบุรี','สุราษฎร์ธานี','สุรินทร์','หนองคาย','หนองบัวลำภู','อ่างทอง','อำนาจเจริญ','อุดรธานี','อุตรดิตถ์','อุทัยธานี','อุบลราชธานี'];
+
 function openJobModal(idx = -1) {
+  const sel = document.getElementById('mf-province');
+  // สร้าง options จาก array (ทำครั้งเดียวถ้ายังไม่มี)
+  if (sel.options.length <= 1) {
+    sel.innerHTML = '<option value="">-- เลือกจังหวัด --</option>' +
+      PROVINCES.map(p => `<option value="${p}">${p}</option>`).join('');
+  }
+
   document.getElementById('modal-edit-idx').value = idx;
   document.getElementById('modal-err').style.display = 'none';
+
   if (idx >= 0) {
     const j = jobsList[idx];
-    document.getElementById('modal-title').textContent = '✏️ แก้ไขตำแหน่งงาน';
-    document.getElementById('mf-title').value   = j.title;
-    document.getElementById('mf-company').value = j.company;
-    document.getElementById('mf-group').value   = j.group;
-    document.getElementById('mf-count').value   = j.count;
-    document.getElementById('mf-tags').value    = j.tags.join(', ');
-    document.getElementById('mf-province').value = j.province || '';
-    document.getElementById('mf-urgent').checked = j.urgent;
-    document.getElementById('mf-active').checked = j.active;
+    document.getElementById('modal-title').textContent  = '✏️ แก้ไขตำแหน่งงาน';
+    document.getElementById('mf-title').value           = j.title;
+    document.getElementById('mf-company').value         = j.company;
+    document.getElementById('mf-group').value           = j.group;
+    document.getElementById('mf-count').value           = j.count;
+    document.getElementById('mf-tags').value            = j.tags.join(', ');
+    sel.value                                           = j.province || '';
+    document.getElementById('mf-urgent').checked        = j.urgent;
+    document.getElementById('mf-active').checked        = j.active;
   } else {
-    document.getElementById('modal-title').textContent = '＋ เพิ่มตำแหน่งงานใหม่';
-    document.getElementById('mf-title').value   = '';
-    document.getElementById('mf-company').value = 'ซันฟู้ด อินเตอร์เนชั่นแนล';
-    document.getElementById('mf-group').value   = 'วิศวกรรม';
-    document.getElementById('mf-count').value   = 1;
-    document.getElementById('mf-tags').value    = '';
-    document.getElementById('mf-province').value = '';
-    document.getElementById('mf-urgent').checked = false;
-    document.getElementById('mf-active').checked = true;
+    document.getElementById('modal-title').textContent  = '＋ เพิ่มตำแหน่งงานใหม่';
+    document.getElementById('mf-title').value           = '';
+    document.getElementById('mf-company').value         = 'ซันฟู้ด อินเตอร์เนชั่นแนล';
+    document.getElementById('mf-group').value           = 'วิศวกรรม';
+    document.getElementById('mf-count').value           = 1;
+    document.getElementById('mf-tags').value            = '';
+    sel.value                                           = '';
+    document.getElementById('mf-urgent').checked        = false;
+    document.getElementById('mf-active').checked        = true;
   }
   document.getElementById('job-modal-bg').classList.add('open');
   setTimeout(() => document.getElementById('mf-title').focus(), 100);
@@ -2498,96 +2484,86 @@ function closeJobModal() {
   document.getElementById('job-modal-bg').classList.remove('open');
 }
 
-// close on backdrop click
 document.getElementById('job-modal-bg').addEventListener('click', function(e) {
   if (e.target === this) closeJobModal();
 });
 
+// อ่านค่าจาก modal form
+function readJobForm() {
+  return {
+    title:    document.getElementById('mf-title').value.trim(),
+    company:  document.getElementById('mf-company').value,
+    group:    document.getElementById('mf-group').value,
+    count:    parseInt(document.getElementById('mf-count').value) || 1,
+    tags:     document.getElementById('mf-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+    province: document.getElementById('mf-province').value,
+    urgent:   document.getElementById('mf-urgent').checked,
+    active:   document.getElementById('mf-active').checked,
+  };
+}
+
 async function saveJob() {
-  const title = document.getElementById('mf-title').value.trim();
-  if (!title) {
-    const e = document.getElementById('modal-err');
-    e.textContent = '❌ กรุณากรอกชื่อตำแหน่ง';
-    e.style.display = 'block';
+  const form = readJobForm();
+  if (!form.title) {
+    const errEl = document.getElementById('modal-err');
+    errEl.textContent = '❌ กรุณากรอกชื่อตำแหน่ง';
+    errEl.style.display = 'block';
     return;
   }
-  const job = {
-    title,
-    company: document.getElementById('mf-company').value,
-    group:   document.getElementById('mf-group').value,
-    count:   parseInt(document.getElementById('mf-count').value) || 1,
-    tags:    document.getElementById('mf-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    province: document.getElementById('mf-province').value || '',
-    urgent:  document.getElementById('mf-urgent').checked,
-    active:  document.getElementById('mf-active').checked,
-  };
+  const db  = getDB();
   const idx = parseInt(document.getElementById('modal-edit-idx').value);
-  const db = getDB();
+  const payload = { title: form.title, company: form.company, group: form.group,
+                    count: form.count, tags: form.tags, province: form.province,
+                    urgent: form.urgent, active: form.active };
   if (idx >= 0) {
-    if (db && jobsList[idx]._dbid) {
-      // มี _dbid → update
-      const { error } = await db.from('jobs').update({
-        title: job.title, company: job.company, group: job.group,
-        count: job.count, tags: job.tags, province: job.province,
-        urgent: job.urgent, active: job.active
-      }).eq('id', jobsList[idx]._dbid);
-      if (error) { showToast('❌', 'เกิดข้อผิดพลาด: ' + error.message); return; }
+    // แก้ไข
+    const dbid = jobsList[idx]._dbid;
+    if (db && dbid) {
+      const { error } = await db.from('jobs').update(payload).eq('id', dbid);
+      if (error) { showToast('❌', 'บันทึกไม่สำเร็จ: ' + error.message); return; }
     } else if (db) {
-      // ไม่มี _dbid (มาจาก defaultJobs) → insert ใหม่
-      const { data, error } = await db.from('jobs').insert([{
-        title: job.title, company: job.company, group: job.group,
-        count: job.count, tags: job.tags, province: job.province,
-        urgent: job.urgent, active: job.active
-      }]).select().single();
-      if (!error && data) job._dbid = data.id;
+      const { data, error } = await db.from('jobs').insert([payload]).select().single();
+      if (!error && data) form._dbid = data.id;
     }
-    jobsList[idx] = { ...jobsList[idx], ...job };
-    showToast('✅', `แก้ไขตำแหน่ง "${title}" เรียบร้อย`);
+    jobsList[idx] = { ...jobsList[idx], ...form };
+    showToast('✅', `แก้ไข "${form.title}" เรียบร้อย`);
   } else {
+    // เพิ่มใหม่
     if (db) {
-      const { data, error } = await db.from('jobs').insert([{
-        title: job.title, company: job.company, group: job.group,
-        count: job.count, tags: job.tags, province: job.province,
-        urgent: job.urgent, active: job.active
-      }]).select().single();
-      if (!error && data) jobsList.unshift({ ...job, _dbid: data.id });
-      else jobsList.unshift({ ...job, _dbid: null });
+      const { data, error } = await db.from('jobs').insert([payload]).select().single();
+      jobsList.unshift({ ...form, _dbid: (!error && data) ? data.id : null });
     } else {
-      jobsList.unshift({ ...job, _dbid: null });
+      jobsList.unshift({ ...form, _dbid: null });
     }
-    showToast('➕', `เพิ่มตำแหน่ง "${title}" เรียบร้อย`);
+    showToast('➕', `เพิ่ม "${form.title}" เรียบร้อย`);
   }
-  await syncJobsToApplicantSite();
+  syncJobBadge();
   renderJobsTable();
   closeJobModal();
 }
 
 async function toggleJob(idx) {
-  jobsList[idx].active = !jobsList[idx].active;
+  const j  = jobsList[idx];
+  j.active = !j.active;
   const db = getDB();
-  if (db && jobsList[idx]._dbid) {
-    await db.from('jobs').update({ active: jobsList[idx].active }).eq('id', jobsList[idx]._dbid);
-  }
-  await syncJobsToApplicantSite();
+  if (db && j._dbid) await db.from('jobs').update({ active: j.active }).eq('id', j._dbid);
+  syncJobBadge();
   renderJobsTable();
-  showToast(jobsList[idx].active?'🟢':'🔴', `"${jobsList[idx].title}" ${jobsList[idx].active?'เปิด':'ปิด'}รับสมัครแล้ว`);
+  showToast(j.active ? '🟢' : '🔴', `"${j.title}" ${j.active ? 'เปิด' : 'ปิด'}รับสมัครแล้ว`);
 }
 
 async function deleteJob(idx) {
-  const name = jobsList[idx].title;
-  if (!confirm(`ลบตำแหน่ง "${name}" ออกหรือไม่?`)) return;
+  const j = jobsList[idx];
+  if (!confirm(`ลบตำแหน่ง "${j.title}" ออกหรือไม่?`)) return;
   const db = getDB();
-  if (db && jobsList[idx]._dbid) {
-    await db.from('jobs').delete().eq('id', jobsList[idx]._dbid);
-  }
+  if (db && j._dbid) await db.from('jobs').delete().eq('id', j._dbid);
   jobsList.splice(idx, 1);
-  await syncJobsToApplicantSite();
+  syncJobBadge();
   renderJobsTable();
-  showToast('🗑️', `ลบตำแหน่ง "${name}" แล้ว`);
+  showToast('🗑️', `ลบ "${j.title}" แล้ว`);
 }
 
-// Init jobs table when page loads
-syncJobsToApplicantSite();
+syncJobBadge();
 
 </script>
 
