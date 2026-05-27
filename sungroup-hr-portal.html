@@ -1026,6 +1026,7 @@
               <th>ตำแหน่งงาน</th>
               <th>บริษัท</th>
               <th>กลุ่มงาน</th>
+              <th>จังหวัด</th>
               <th style="text-align:center">จำนวน</th>
               <th style="text-align:center">สถานะ</th>
               <th style="text-align:center">ด่วน</th>
@@ -1085,6 +1086,38 @@
           <div>
             <label style="font-size:12px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">แท็ก (คั่นด้วยจุลภาค)</label>
             <input id="mf-tags" type="text" placeholder="เช่น วิศวกรรม, ไฟฟ้า" style="width:100%;padding:11px 14px;border:2px solid var(--gray-200);border-radius:10px;font-family:Sarabun,sans-serif;font-size:14px;outline:none;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--gray-200)'">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">จังหวัด <span style="color:var(--red)">*</span></label>
+            <select id="mf-province" style="width:100%;padding:11px 14px;border:2px solid var(--gray-200);border-radius:10px;font-family:Sarabun,sans-serif;font-size:13px;outline:none;background:white;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--gray-200)'">
+              <option value="">-- เลือกจังหวัด --</option>
+              <option>กรุงเทพมหานคร</option><option>กระบี่</option><option>กาญจนบุรี</option>
+              <option>กาฬสินธุ์</option><option>กำแพงเพชร</option><option>ขอนแก่น</option>
+              <option>จันทบุรี</option><option>ฉะเชิงเทรา</option><option>ชลบุรี</option>
+              <option>ชัยนาท</option><option>ชัยภูมิ</option><option>ชุมพร</option>
+              <option>เชียงราย</option><option>เชียงใหม่</option><option>ตรัง</option>
+              <option>ตราด</option><option>ตาก</option><option>นครนายก</option>
+              <option>นครปฐม</option><option>นครพนม</option><option>นครราชสีมา</option>
+              <option>นครศรีธรรมราช</option><option>นครสวรรค์</option><option>นนทบุรี</option>
+              <option>นราธิวาส</option><option>น่าน</option><option>บึงกาฬ</option>
+              <option>บุรีรัมย์</option><option>ปทุมธานี</option><option>ประจวบคีรีขันธ์</option>
+              <option>ปราจีนบุรี</option><option>ปัตตานี</option><option>พระนครศรีอยุธยา</option>
+              <option>พะเยา</option><option>พังงา</option><option>พัทลุง</option>
+              <option>พิจิตร</option><option>พิษณุโลก</option><option>เพชรบุรี</option>
+              <option>เพชรบูรณ์</option><option>แพร่</option><option>ภูเก็ต</option>
+              <option>มหาสารคาม</option><option>มุกดาหาร</option><option>แม่ฮ่องสอน</option>
+              <option>ยโสธร</option><option>ยะลา</option><option>ร้อยเอ็ด</option>
+              <option>ระนอง</option><option>ระยอง</option><option>ราชบุรี</option>
+              <option>ลพบุรี</option><option>ลำปาง</option><option>ลำพูน</option>
+              <option>เลย</option><option>ศรีสะเกษ</option><option>สกลนคร</option>
+              <option>สงขลา</option><option>สตูล</option><option>สมุทรปราการ</option>
+              <option>สมุทรสงคราม</option><option>สมุทรสาคร</option><option>สระแก้ว</option>
+              <option>สระบุรี</option><option>สิงห์บุรี</option><option>สุโขทัย</option>
+              <option>สุพรรณบุรี</option><option>สุราษฎร์ธานี</option><option>สุรินทร์</option>
+              <option>หนองคาย</option><option>หนองบัวลำภู</option><option>อ่างทอง</option>
+              <option>อำนาจเจริญ</option><option>อุดรธานี</option><option>อุตรดิตถ์</option>
+              <option>อุทัยธานี</option><option>อุบลราชธานี</option>
+            </select>
           </div>
           <div style="display:flex;align-items:center;gap:20px;padding-top:8px;">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gray-600)">
@@ -2373,6 +2406,7 @@ function renderJobsTable() {
       </td>
       <td style="font-size:12px;color:var(--gray-600)">${j.company}</td>
       <td><span style="font-size:11px;background:var(--red-light);color:var(--red);padding:3px 10px;border-radius:10px;font-weight:600">${j.group}</span></td>
+      <td style="font-size:12px;color:var(--gray-600)">${j.province ? `<span style="display:inline-flex;align-items:center;gap:4px">📍 ${j.province}</span>` : '<span style="color:var(--gray-300)">—</span>'}</td>
       <td style="text-align:center;font-weight:700;font-size:14px;color:var(--gray-800)">${j.count}</td>
       <td style="text-align:center"><span class="${j.active?'job-status-on':'job-status-off'}">${j.active?'เปิดรับ':'ปิด'}</span></td>
       <td style="text-align:center">${j.urgent?'<span class="urgent-dot" title="ตำแหน่งด่วน"></span>':'<span style="color:var(--gray-200)">—</span>'}</td>
@@ -2384,7 +2418,7 @@ function renderJobsTable() {
         </div>
       </td>
     </tr>`;
-  }).join('') || `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--gray-400)">ไม่พบตำแหน่งที่ค้นหา</td></tr>`;
+  }).join('') || `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--gray-400)">ไม่พบตำแหน่งที่ค้นหา</td></tr>`;
 
   // Stats bar
   const statsEl = document.getElementById('jobs-stats-bar');
@@ -2425,6 +2459,7 @@ function openJobModal(idx = -1) {
     document.getElementById('mf-group').value   = j.group;
     document.getElementById('mf-count').value   = j.count;
     document.getElementById('mf-tags').value    = j.tags.join(', ');
+    document.getElementById('mf-province').value = j.province || '';
     document.getElementById('mf-urgent').checked = j.urgent;
     document.getElementById('mf-active').checked = j.active;
   } else {
@@ -2434,6 +2469,7 @@ function openJobModal(idx = -1) {
     document.getElementById('mf-group').value   = 'วิศวกรรม';
     document.getElementById('mf-count').value   = 1;
     document.getElementById('mf-tags').value    = '';
+    document.getElementById('mf-province').value = '';
     document.getElementById('mf-urgent').checked = false;
     document.getElementById('mf-active').checked = true;
   }
@@ -2460,12 +2496,13 @@ async function saveJob() {
   }
   const job = {
     title,
-    company: document.getElementById('mf-company').value,
-    group:   document.getElementById('mf-group').value,
-    count:   parseInt(document.getElementById('mf-count').value) || 1,
-    tags:    document.getElementById('mf-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    urgent:  document.getElementById('mf-urgent').checked,
-    active:  document.getElementById('mf-active').checked,
+    company:  document.getElementById('mf-company').value,
+    group:    document.getElementById('mf-group').value,
+    count:    parseInt(document.getElementById('mf-count').value) || 1,
+    tags:     document.getElementById('mf-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    province: document.getElementById('mf-province').value,
+    urgent:   document.getElementById('mf-urgent').checked,
+    active:   document.getElementById('mf-active').checked,
   };
   const idx = parseInt(document.getElementById('modal-edit-idx').value);
   const db = getDB();
@@ -2473,7 +2510,7 @@ async function saveJob() {
     if (db && jobsList[idx]._dbid) {
       const { error } = await db.from('jobs').update({
         title: job.title, company: job.company, group: job.group,
-        count: job.count, tags: job.tags, urgent: job.urgent, active: job.active
+        count: job.count, tags: job.tags, province: job.province, urgent: job.urgent, active: job.active
       }).eq('id', jobsList[idx]._dbid);
       if (error) { showToast('❌', 'เกิดข้อผิดพลาด: ' + error.message); return; }
     }
@@ -2483,7 +2520,7 @@ async function saveJob() {
     if (db) {
       const { data, error } = await db.from('jobs').insert([{
         title: job.title, company: job.company, group: job.group,
-        count: job.count, tags: job.tags, urgent: job.urgent, active: job.active
+        count: job.count, tags: job.tags, province: job.province, urgent: job.urgent, active: job.active
       }]).select().single();
       if (!error && data) jobsList.unshift({ ...job, _dbid: data.id });
       else jobsList.unshift({ ...job, _dbid: null });
