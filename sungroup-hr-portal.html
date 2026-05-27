@@ -2337,22 +2337,22 @@ function exportExcel() {
 
 // ===== DEFAULT JOBS DATA =====
 const defaultJobs = [
-  { title:'เจ้าหน้าที่ R&D Process Meat',      count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['R&D','อาหาร'],              group:'วิจัย',      urgent:false, active:true },
-  { title:'วิศวกรไฟฟ้า (โรงชำแหละ)',           count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['วิศวกรรม','ไฟฟ้า'],         group:'วิศวกรรม',   urgent:false, active:true },
-  { title:'วิศวกรเครื่องกล (โรงชำแหละ)',        count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['วิศวกรรม','เครื่องกล'],     group:'วิศวกรรม',   urgent:false, active:true },
-  { title:'วิศวกรอุตสาหการ',                   count:2,  company:'ซันฟีด',                     tags:['วิศวกรรม','อุตสาหการ'],     group:'วิศวกรรม',   urgent:false, active:true },
-  { title:'เจ้าหน้าที่บัญชี',                  count:2,  company:'SUNGROUP กรุงเทพฯ',           tags:['บัญชี','ด่วน!'],            group:'บัญชี',      urgent:true,  active:true },
-  { title:'ผู้จัดการแผนกบัญชี',                count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['บัญชี','ผู้บริหาร'],        group:'บัญชี',      urgent:false, active:true },
-  { title:'เจ้าหน้าที่ขายต่างประเทศ',          count:3,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ขาย','ต่างประเทศ'],         group:'การขาย',     urgent:false, active:true },
-  { title:'เจ้าหน้าที่ขายอาหารสัตว์',          count:6,  company:'ซันฟีด',                     tags:['ขาย','อาหารสัตว์'],         group:'การขาย',     urgent:false, active:true },
-  { title:'สัตวแพทย์ควบคุมฟาร์ม',              count:5,  company:'ซันฟาร์ม',                   tags:['สัตวแพทย์','ฟาร์ม'],         group:'ฟาร์ม',      urgent:false, active:true },
-  { title:'สัตวบาลประจำฟาร์ม',                 count:20, company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['สัตวบาล','ฟาร์ม'],          group:'ฟาร์ม',      urgent:false, active:true },
-  { title:'เจ้าหน้าที่ประกันคุณภาพ (QA)',      count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['QA','คุณภาพ'],              group:'QA/QC',      urgent:false, active:true },
-  { title:'Safety Officer (จป.วิชาชีพ)',        count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ความปลอดภัย','จป.'],         group:'ความปลอดภัย',urgent:false, active:true },
-  { title:'เจ้าหน้าที่ Oracle Developer',       count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['IT','Oracle','Database'],    group:'ICT/IT',     urgent:false, active:true },
-  { title:'เจ้าหน้าที่บุคคล (ภาษาพม่า)',       count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['HR','พม่า'],                 group:'HR',         urgent:false, active:true },
-  { title:'เจ้าหน้าที่จัดซื้อ',               count:1,  company:'SUNGROUP กรุงเทพฯ',           tags:['จัดซื้อ','โลจิสติก'],        group:'จัดซื้อ',    urgent:false, active:true },
-  { title:'ผู้จัดการแผนกฟาร์ม',               count:5,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ผู้บริหาร','ฟาร์ม'],         group:'ฟาร์ม',      urgent:false, active:true },
+  { title:'เจ้าหน้าที่ R&D Process Meat',      count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['R&D','อาหาร'],              group:'วิจัย',      province:'', urgent:false, active:true },
+  { title:'วิศวกรไฟฟ้า (โรงชำแหละ)',           count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['วิศวกรรม','ไฟฟ้า'],         group:'วิศวกรรม',   province:'', urgent:false, active:true },
+  { title:'วิศวกรเครื่องกล (โรงชำแหละ)',        count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['วิศวกรรม','เครื่องกล'],     group:'วิศวกรรม',   province:'', urgent:false, active:true },
+  { title:'วิศวกรอุตสาหการ',                   count:2,  company:'ซันฟีด',                     tags:['วิศวกรรม','อุตสาหการ'],     group:'วิศวกรรม',   province:'', urgent:false, active:true },
+  { title:'เจ้าหน้าที่บัญชี',                  count:2,  company:'SUNGROUP กรุงเทพฯ',           tags:['บัญชี','ด่วน!'],            group:'บัญชี',      province:'กรุงเทพมหานคร', urgent:true,  active:true },
+  { title:'ผู้จัดการแผนกบัญชี',                count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['บัญชี','ผู้บริหาร'],        group:'บัญชี',      province:'', urgent:false, active:true },
+  { title:'เจ้าหน้าที่ขายต่างประเทศ',          count:3,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ขาย','ต่างประเทศ'],         group:'การขาย',     province:'', urgent:false, active:true },
+  { title:'เจ้าหน้าที่ขายอาหารสัตว์',          count:6,  company:'ซันฟีด',                     tags:['ขาย','อาหารสัตว์'],         group:'การขาย',     province:'', urgent:false, active:true },
+  { title:'สัตวแพทย์ควบคุมฟาร์ม',              count:5,  company:'ซันฟาร์ม',                   tags:['สัตวแพทย์','ฟาร์ม'],         group:'ฟาร์ม',      province:'', urgent:false, active:true },
+  { title:'สัตวบาลประจำฟาร์ม',                 count:20, company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['สัตวบาล','ฟาร์ม'],          group:'ฟาร์ม',      province:'', urgent:false, active:true },
+  { title:'เจ้าหน้าที่ประกันคุณภาพ (QA)',      count:2,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['QA','คุณภาพ'],              group:'QA/QC',      province:'', urgent:false, active:true },
+  { title:'Safety Officer (จป.วิชาชีพ)',        count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ความปลอดภัย','จป.'],         group:'ความปลอดภัย',province:'', urgent:false, active:true },
+  { title:'เจ้าหน้าที่ Oracle Developer',       count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['IT','Oracle','Database'],    group:'ICT/IT',     province:'', urgent:false, active:true },
+  { title:'เจ้าหน้าที่บุคคล (ภาษาพม่า)',       count:1,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['HR','พม่า'],                 group:'HR',         province:'', urgent:false, active:true },
+  { title:'เจ้าหน้าที่จัดซื้อ',               count:1,  company:'SUNGROUP กรุงเทพฯ',           tags:['จัดซื้อ','โลจิสติก'],        group:'จัดซื้อ',    province:'กรุงเทพมหานคร', urgent:false, active:true },
+  { title:'ผู้จัดการแผนกฟาร์ม',               count:5,  company:'ซันฟู้ด อินเตอร์เนชั่นแนล', tags:['ผู้บริหาร','ฟาร์ม'],         group:'ฟาร์ม',      province:'', urgent:false, active:true },
 ];
 
 async function loadJobs() {
@@ -2367,7 +2367,7 @@ async function loadJobs() {
     return data.map(j => ({
       _dbid: j.id,
       title: j.title, company: j.company, group: j.group,
-      count: j.count, tags: j.tags || [], urgent: j.urgent, active: j.active
+      count: j.count, tags: j.tags || [], province: j.province || '', urgent: j.urgent, active: j.active
     }));
   } catch(e) { return defaultJobs; }
 }
@@ -2514,7 +2514,7 @@ async function saveJob() {
       }).eq('id', jobsList[idx]._dbid);
       if (error) { showToast('❌', 'เกิดข้อผิดพลาด: ' + error.message); return; }
     }
-    jobsList[idx] = { ...job, _dbid: jobsList[idx]._dbid };
+    jobsList[idx] = { ...jobsList[idx], ...job };
     showToast('✅', `แก้ไขตำแหน่ง "${title}" เรียบร้อย`);
   } else {
     if (db) {
