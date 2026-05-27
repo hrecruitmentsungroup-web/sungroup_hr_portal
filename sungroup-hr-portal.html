@@ -2300,7 +2300,15 @@ function renderTable() {
         interview:'background:#DBEAFE;color:#1E40AF',
         pending:  'background:#FEF3C7;color:#92400E',
       };
-      actionCell = `<span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;${badgeColors[a.status]||''}">${statusMap[a.status]||a.status}</span>`;
+      const revertBtn = `<button onclick="verdictApplicant(${globalIdx},'pending',this)"
+        style="padding:4px 10px;background:#FEF3C7;color:#92400E;border:none;border-radius:8px;font-family:Sarabun,sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;"
+        onmouseover="this.style.background='#92400E';this.style.color='white'"
+        onmouseout="this.style.background='#FEF3C7';this.style.color='#92400E'"
+        title="ย้อนกลับไปรอพิจารณา">↩ ย้อนกลับ</button>`;
+      actionCell = `<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;">
+        <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;${badgeColors[a.status]||''}">${statusMap[a.status]||a.status}</span>
+        ${revertBtn}
+      </div>`;
     }
 
     return `<tr>
