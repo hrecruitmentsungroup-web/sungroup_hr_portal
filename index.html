@@ -1202,24 +1202,6 @@
             <label>ตำแหน่งที่สมัคร <span class="req">*</span></label>
             <select id="f-position">
               <option value="">เลือกตำแหน่ง</option>
-              <option>วิศวกรไฟฟ้า (โรงชำแหละ)</option>
-              <option>วิศวกรเครื่องกล (โรงชำแหละ)</option>
-              <option>วิศวกรอุตสาหการ</option>
-              <option>เจ้าหน้าที่บัญชี</option>
-              <option>เจ้าหน้าที่ขายต่างประเทศ</option>
-              <option>เจ้าหน้าที่ขายภายในประเทศ</option>
-              <option>เจ้าหน้าที่ขายอาหารสัตว์</option>
-              <option>เจ้าหน้าที่ประกันคุณภาพ (QA)</option>
-              <option>เจ้าหน้าที่ Production</option>
-              <option>สัตวแพทย์ควบคุมฟาร์ม</option>
-              <option>สัตวบาลประจำฟาร์ม</option>
-              <option>เจ้าหน้าที่บุคคล</option>
-              <option>เจ้าหน้าที่จัดซื้อ</option>
-              <option>Safety Officer (จป.วิชาชีพ)</option>
-              <option>เจ้าหน้าที่ Oracle Developer</option>
-              <option>เจ้าหน้าที่R&D Process Meat</option>
-              <option>ผู้จัดการแผนกฟาร์ม</option>
-              <option>ผู้จัดการแผนกบัญชี</option>
             </select>
           </div>
           <div class="form-group">
@@ -1574,7 +1556,8 @@ async function loadJobsData() {
     if (error || !data || data.length === 0) return defaultJobsData;
     return data.map(j => ({
       title: j.title, company: j.company, group: j.group,
-      count: j.count, tags: j.tags || [], urgent: j.urgent, active: j.active
+      count: j.count, tags: j.tags || [], urgent: j.urgent, active: j.active,
+      location: j.province || ''
     }));
   } catch(e) { return defaultJobsData; }
 }
@@ -1588,6 +1571,15 @@ async function initJobs() {
   const nums = document.querySelectorAll('.hero .num');
   if(nums[0]) nums[0].textContent = jobsData.length + '+';
   if(nums[2]) nums[2].textContent = totalSlots + '+';
+
+  // populate dropdown ตำแหน่งในฟอร์มสมัคร
+  const sel = document.getElementById('f-position');
+  if (sel) {
+    sel.innerHTML = '<option value="">เลือกตำแหน่ง</option>' +
+      jobsData.filter(j => j.active !== false).map(j =>
+        `<option value="${j.title}">${j.title}${j.location ? ' — ' + j.location : ''}</option>`
+      ).join('');
+  }
 }
 
 // อัปเดตตำแหน่งใหม่เมื่อกลับมาที่หน้านี้
