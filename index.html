@@ -1837,9 +1837,11 @@ async function submitForm() {
       gender: newApp.gender,
       salary: newApp.salary,
       lang: newApp.lang,
-      major: newApp.major,
-      school: newApp.school,
+      university: newApp.school,
+      faculty: newApp.major,
+      gpa: newApp.gpa,
       skills: newApp.skills,
+      submitted_at: newApp.submittedAt,
     }]);
   } catch(e) { console.warn('Supabase error', e); }
 
