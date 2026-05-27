@@ -4,14 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SunGroup — HR Portal</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>
-  // ===== Supabase JS SDK =====
-  </script>
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
     const SUPA_URL = 'https://skzknrfkhibbpkxqsdjs.supabase.co';
     const SUPA_KEY = 'sb_publishable_GFw-m0mmTRQlBog9j3msaQ_CaFeFrXB';
-    window._supabase = createClient(SUPA_URL, SUPA_KEY);
+    window._supabase = supabase.createClient(SUPA_URL, SUPA_KEY);
     window.dispatchEvent(new Event('supabase-ready'));
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet">
