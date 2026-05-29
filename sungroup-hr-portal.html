@@ -536,6 +536,7 @@
   }
 
   .badge.pending  { background: #FEF3C7; color: #92400E; }
+  .badge.interview1{ background: #E0E7FF; color: #3730A3; }
   .badge.interview{ background: #DBEAFE; color: #1E40AF; }
   .badge.selected { background: #D1FAE5; color: #065F46; }
   .badge.rejected { background: #FEE2E2; color: #991B1B; }
@@ -1277,6 +1278,7 @@
         <div class="table-controls">
           <div class="filter-chips" id="filter-chips">
             <button class="chip active" onclick="chipFilter('pending',this)">⏳ รอพิจารณา (<span id="cnt-pending">0</span>)</button>
+            <button class="chip" onclick="chipFilter('interview1',this)">📝 สัมภาษณ์รอบ 1 (<span id="cnt-interview1">0</span>)</button>
             <button class="chip" onclick="chipFilter('interview',this)">🎯 นัดสัมภาษณ์ (<span id="cnt-interview">0</span>)</button>
             <button class="chip" onclick="chipFilter('selected',this)">✅ ผ่านคัดเลือก (<span id="cnt-selected">0</span>)</button>
             <button class="chip" onclick="chipFilter('rejected',this)">❌ ไม่ผ่าน (<span id="cnt-rejected">0</span>)</button>
@@ -2052,6 +2054,7 @@ function mapApplicants(rows) {
     skills:       a.skills || {technical:5,communication:5,teamwork:5,leadership:5,problem:5,adaptability:5},
     submittedAt:  a.submitted_at || a.created_at || null,
     interviewDate: a.interview_date || '',
+    interview1Date: a.interview1_date || '',
   }));
 }
 
@@ -2073,8 +2076,11 @@ async function refreshBadges() {
 function renderDashboard() {
   const total     = applicants.length;
   const pending   = applicants.filter(a => a.status === 'pending').length;
+  const interview1 = applicants.filter(a => a.status === 'interview1').length;
   const interview = applicants.filter(a => a.status === 'interview').length;
   const selected  = applicants.filter(a => a.status === 'selected').length;
+  // funnel ขั้น "สัมภาษณ์" รวมทั้งรอบ 1 และ นัดสัมภาษณ์ + ที่ผ่านไปแล้ว
+  const interviewStage = interview1 + interview + selected;
   const rejected  = applicants.filter(a => a.status === 'rejected').length;
   // "รับเข้าทำงาน" = selected ที่มี interviewDate (ยืนยันวันแล้ว) หรือประมาณ 60% ของ selected
   const hired = applicants.filter(a => a.status === 'selected' && a.interviewDate).length || Math.round(selected * 0.6);
@@ -2094,11 +2100,11 @@ function renderDashboard() {
   const pct = n => Math.max(8, Math.round((n / total) * 100));
   setText('fn-total',      total);   setText('fn-total-n',    total);
   setText('fn-screen',     screened);setText('fn-screen-n',   screened);
-  setText('fn-interview',  interview);setText('fn-interview-n',interview);
+  setText('fn-interview',  interviewStage);setText('fn-interview-n',interviewStage);
   setText('fn-selected',   selected); setText('fn-selected-n', selected);
   setText('fn-hired',      hired);    setText('fn-hired-n',    hired);
   const setW = (id, n) => { const e = document.getElementById(id); if(e) e.style.width = pct(n) + '%'; };
-  setW('fn-screen', screened); setW('fn-interview', interview); setW('fn-selected', selected); setW('fn-hired', hired);
+  setW('fn-screen', screened); setW('fn-interview', interviewStage); setW('fn-selected', selected); setW('fn-hired', hired);
 
   // Donut — group breakdown
   const groupColors = ['#A50E25','#C42236','#E8384F','#F5A5B0','#E4E1DE','#1D4ED8','#15803D','#B45309'];
@@ -2261,7 +2267,7 @@ function goPage(id, el) {
 
 // ===== TABLE =====
 function updateChipCounts() {
-  const counts = { pending: 0, interview: 0, selected: 0, rejected: 0 };
+  const counts = { pending: 0, interview1: 0, interview: 0, selected: 0, rejected: 0 };
   applicants.forEach(a => { if (counts[a.status] !== undefined) counts[a.status]++; });
   Object.keys(counts).forEach(k => {
     const el = document.getElementById('cnt-' + k);
@@ -2290,16 +2296,16 @@ function renderTable() {
     const globalIdx = applicants.indexOf(a);
     const cleanName = a.name.replace('นาย','').replace('นางสาว','').replace('นาง','').trim();
     const initials = cleanName.charAt(0) || '?';
-    const statusMap = { pending:'รอพิจารณา', interview:'นัดสัมภาษณ์', selected:'ผ่านคัดเลือก', rejected:'ไม่ผ่าน' };
+    const statusMap = { pending:'รอพิจารณา', interview1:'สัมภาษณ์รอบ 1', interview:'นัดสัมภาษณ์', selected:'ผ่านคัดเลือก', rejected:'ไม่ผ่าน' };
     const appPos = a.pos || a.position || '-';
     const appExp = a.exp || '-';
 
     // คอลัมน์ action — เปลี่ยนตาม tab ที่เลือก
     let actionCell = '';
     if (tableFilter === 'pending') {
-      // ปุ่มพิจารณา: ผ่าน → interview, ไม่ผ่าน → rejected
+      // ปุ่มพิจารณา: ผ่าน → interview1 (สัมภาษณ์รอบ 1), ไม่ผ่าน → rejected
       actionCell = `<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
-        <button onclick="verdictApplicant(${globalIdx},'interview',this)"
+        <button onclick="verdictApplicant(${globalIdx},'interview1',this)"
           style="padding:6px 14px;background:#D1FAE5;color:#065F46;border:none;border-radius:8px;font-family:Sarabun,sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap;"
           onmouseover="this.style.background='#065F46';this.style.color='white'"
           onmouseout="this.style.background='#D1FAE5';this.style.color='#065F46'">✓ ผ่าน</button>
@@ -2308,6 +2314,18 @@ function renderTable() {
           onmouseover="this.style.background='#991B1B';this.style.color='white'"
           onmouseout="this.style.background='#FEE2E2';this.style.color='#991B1B'">✗ ไม่ผ่าน</button>
       </div>`;
+    } else if (tableFilter === 'interview1') {
+      // สัมภาษณ์รอบ 1: date picker + ปุ่มผ่าน → interview (รอบ 2), ไม่ผ่าน → rejected
+      actionCell = `<div style="display:flex;gap:6px;justify-content:center;">
+          <button onclick="verdictApplicant(${globalIdx},'interview',this)"
+            style="padding:5px 12px;background:#D1FAE5;color:#065F46;border:none;border-radius:8px;font-family:Sarabun,sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;"
+            onmouseover="this.style.background='#065F46';this.style.color='white'"
+            onmouseout="this.style.background='#D1FAE5';this.style.color='#065F46'">✓ ผ่าน</button>
+          <button onclick="verdictApplicant(${globalIdx},'rejected',this)"
+            style="padding:5px 12px;background:#FEE2E2;color:#991B1B;border:none;border-radius:8px;font-family:Sarabun,sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;"
+            onmouseover="this.style.background='#991B1B';this.style.color='white'"
+            onmouseout="this.style.background='#FEE2E2';this.style.color='#991B1B'">✗ ไม่ผ่าน</button>
+        </div>`;
     } else if (tableFilter === 'interview') {
       // date picker + ปุ่มผ่าน/ไม่ผ่านสัมภาษณ์
       const dateVal = a.interviewDate || '';
@@ -2329,6 +2347,7 @@ function renderTable() {
       const badgeColors = {
         selected: 'background:#D1FAE5;color:#065F46',
         rejected: 'background:#FEE2E2;color:#991B1B',
+        interview1:'background:#E0E7FF;color:#3730A3',
         interview:'background:#DBEAFE;color:#1E40AF',
         pending:  'background:#FEF3C7;color:#92400E',
       };
@@ -2345,7 +2364,21 @@ function renderTable() {
 
     // td วันนัดสัมภาษณ์ หรือ ปุ่มจัดการ
     let manageTd;
-    if (tableFilter === 'interview') {
+    if (tableFilter === 'interview1') {
+      const iDate = a.interview1Date || '';
+      const iLabel = iDate
+        ? new Date(iDate).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'})
+        : 'ยังไม่นัด';
+      const iColor = iDate ? '#3730A3' : '#94A3B8';
+      manageTd = '<td style="text-align:center;padding:8px;">'
+        + '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">'
+        + '<input type="date" value="' + iDate + '" '
+        + 'style="border:1.5px solid #C7D2FE;border-radius:8px;padding:5px 8px;font-size:12px;font-family:Sarabun,sans-serif;color:#3730A3;background:#EEF2FF;cursor:pointer;width:130px;text-align:center;" '
+        + 'onchange="setInterview1Date(' + globalIdx + ', this.value, this)">'
+        + '<div style="font-size:10px;font-weight:700;color:' + iColor + '">'
+        + (iDate ? '📝 ' : '') + iLabel + '</div>'
+        + '</div></td>';
+    } else if (tableFilter === 'interview') {
       const iDate = a.interviewDate || '';
       const iLabel = iDate
         ? new Date(iDate).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'})
@@ -2462,6 +2495,63 @@ async function setInterviewDate(idx, val, inputEl) {
   }
 }
 
+async function setInterview1Date(idx, val, inputEl) {
+  if (!val) return;
+  applicants[idx].interview1Date = val;
+
+  if (inputEl) {
+    inputEl.style.borderColor = '#A5B4FC';
+    inputEl.style.background  = '#EEF2FF';
+    inputEl.disabled = true;
+  }
+
+  const db = getDB();
+  let saved = false;
+  if (db && applicants[idx]._dbid) {
+    try {
+      const { error } = await db.from('applicants')
+        .update({ interview1_date: val })
+        .eq('id', applicants[idx]._dbid);
+      saved = !error;
+      if (error) {
+        // คอลัมน์อาจยังไม่มีใน Supabase — บันทึก local ไว้ก่อน
+        saved = true;
+        showToast('⚠️', 'บันทึกชั่วคราว (DB ยังไม่มีคอลัมน์ interview1_date)');
+      }
+    } catch(e) {
+      saved = true;
+      showToast('⚠️', 'บันทึกชั่วคราว (เชื่อมต่อ DB ไม่ได้)');
+    }
+  } else {
+    saved = true;
+  }
+
+  if (inputEl) {
+    inputEl.disabled = false;
+    if (saved) {
+      inputEl.style.borderColor = '#34D399';
+      inputEl.style.background  = '#ECFDF5';
+      let badge = inputEl.parentElement.querySelector('.date-saved-badge');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'date-saved-badge';
+        badge.style.cssText = 'font-size:13px;margin-left:4px;';
+        inputEl.parentElement.insertBefore(badge, inputEl.nextSibling);
+      }
+      badge.textContent = '✅';
+      setTimeout(() => {
+        inputEl.style.borderColor = '#C7D2FE';
+        inputEl.style.background  = '#EEF2FF';
+        if (badge) badge.textContent = '';
+      }, 2000);
+      const formatted = formatThaiDate(val);
+      showToast('📝', `บันทึกวันสัมภาษณ์รอบ 1 ${applicants[idx].name}: ${formatted}`);
+    }
+  } else if (saved) {
+    showToast('📝', `บันทึกวันสัมภาษณ์รอบ 1 ${applicants[idx].name}: ${formatThaiDate(val)}`);
+  }
+}
+
 function chipFilter(status, btn) {
   tableFilter = status;
   document.querySelectorAll('#page-table .chip').forEach(b => b.classList.remove('active'));
@@ -2471,11 +2561,14 @@ function chipFilter(status, btn) {
   const colManage = document.getElementById('col-manage-label');
   if (label) {
     if (status === 'pending')   label.textContent = 'การพิจารณา';
+    else if (status === 'interview1') label.textContent = 'ผลสัมภาษณ์รอบ 1';
     else if (status === 'interview') label.textContent = 'ผลการสัมภาษณ์';
     else label.textContent = 'สถานะ';
   }
   if (colManage) {
-    colManage.textContent = status === 'interview' ? 'วันนัดสัมภาษณ์' : 'จัดการ';
+    if (status === 'interview1') colManage.textContent = 'วันนัดสัมภาษณ์รอบ 1';
+    else if (status === 'interview') colManage.textContent = 'วันนัดสัมภาษณ์';
+    else colManage.textContent = 'จัดการ';
   }
   renderTable();
 }
@@ -2493,10 +2586,12 @@ async function verdictApplicant(idx, newStatus, btnEl) {
       const { error } = await db.from('applicants')
         .update({ status: newStatus })
         .eq('id', a._dbid);
-      if (error) { showToast('❌', 'บันทึกไม่สำเร็จ: ' + error.message); return; }
+      if (error) {
+        // คอลัมน์ status อาจไม่รับค่าใหม่ (เช่น interview1) — บันทึก local ไว้ก่อน
+        showToast('⚠️', 'บันทึกชั่วคราว (DB ไม่รับสถานะนี้): ' + error.message);
+      }
     } catch(e) {
-      showToast('❌', 'เชื่อมต่อ Supabase ไม่ได้');
-      return;
+      showToast('⚠️', 'บันทึกชั่วคราว (เชื่อมต่อ DB ไม่ได้)');
     }
   }
 
@@ -2511,8 +2606,15 @@ async function verdictApplicant(idx, newStatus, btnEl) {
     row.style.transform = 'translateX(30px)';
   }
 
-  const label = newStatus === 'interview' ? '🎯 นัดสัมภาษณ์แล้ว' : '❌ ไม่ผ่านการคัดเลือก';
-  showToast(newStatus === 'interview' ? '🎯' : '❌', `${name}: ${label}`);
+  const labelMap = {
+    interview1: '📝 ผ่านเข้าสัมภาษณ์รอบ 1',
+    interview:  '🎯 นัดสัมภาษณ์แล้ว',
+    selected:   '✅ ผ่านการคัดเลือก',
+    rejected:   '❌ ไม่ผ่านการคัดเลือก',
+    pending:    '↩ ย้อนกลับรอพิจารณา',
+  };
+  const iconMap = { interview1:'📝', interview:'🎯', selected:'✅', rejected:'❌', pending:'↩' };
+  showToast(iconMap[newStatus] || '✓', `${name}: ${labelMap[newStatus] || newStatus}`);
 
   setTimeout(() => {
     renderTable();
@@ -2823,7 +2925,7 @@ async function openDailyChanges() {
       </div>`;
   } else {
     const statusLabels = {
-      pending: 'รอพิจารณา', interview: 'นัดสัมภาษณ์',
+      pending: 'รอพิจารณา', interview1: 'สัมภาษณ์รอบ 1', interview: 'นัดสัมภาษณ์',
       selected: 'ผ่านคัดเลือก', rejected: 'ไม่ผ่าน'
     };
     list.innerHTML = newApplicants.map(a => {
@@ -3005,7 +3107,7 @@ function exportExcel() {
     a.edu || '',
     a.exp || '',
     a.score || 0,
-    { pending:'รอพิจารณา', interview:'นัดสัมภาษณ์', selected:'ผ่านคัดเลือก', rejected:'ไม่ผ่าน' }[a.status] || a.status,
+    { pending:'รอพิจารณา', interview1:'สัมภาษณ์รอบ 1', interview:'นัดสัมภาษณ์', selected:'ผ่านคัดเลือก', rejected:'ไม่ผ่าน' }[a.status] || a.status,
     a.email || '',
     a.phone || '',
     a.submittedAt ? new Date(a.submittedAt).toLocaleDateString('th-TH') : '',
