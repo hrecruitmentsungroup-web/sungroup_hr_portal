@@ -3192,30 +3192,49 @@ function updateSyncBadge() {
 
 // ===== EXPORT EXCEL =====
 function exportExcel() {
-  // Build CSV-compatible data then trigger download as .xlsx via blob
-  const rows = applicants.map(a => [
+  const statusMap = { pending:'รอพิจารณา', interview1:'สัมภาษณ์รอบ 1', interview:'นัดสัมภาษณ์', selected:'ผ่านคัดเลือก', rejected:'ไม่ผ่าน' };
+  const rows = sortByLatest(applicants).map(a => [
     a.id || 'SGR-2026-XXXX',
-    a.name,
+    a.name || '',
+    a.age || '',
+    a.gender || '',
+    a.phone || '',
+    a.email || '',
     a.pos || a.position || '',
     a.group || '',
     a.edu || '',
+    a.school || '',
+    a.major || '',
+    a.gpa || '',
     a.exp || '',
+    a.lastco || '',
+    a.lastpos || '',
+    a.salary || '',
+    a.lang || '',
+    a.cert || '',
     a.score || 0,
-    { pending:'รอพิจารณา', interview1:'สัมภาษณ์รอบ 1', interview:'นัดสัมภาษณ์', selected:'ผ่านคัดเลือก', rejected:'ไม่ผ่าน' }[a.status] || a.status,
-    a.email || '',
-    a.phone || '',
+    statusMap[a.status] || a.status,
     a.submittedAt ? new Date(a.submittedAt).toLocaleDateString('th-TH') : '',
-    ''
+    a.photoUrl ? `<a href="${a.photoUrl}">ดูรูป</a>` : '',
   ]);
 
   // Build HTML table that Excel can open natively
-  const headers = ['รหัสใบสมัคร','ชื่อ-นามสกุล','ตำแหน่ง','กลุ่มงาน','วุฒิ','ประสบการณ์','คะแนน','สถานะ','อีเมล','เบอร์โทร','วันที่สมัคร','หมายเหตุ'];
+  const headers = ['รหัสใบสมัคร','ชื่อ-นามสกุล','อายุ','เพศ','เบอร์โทร','อีเมล','ตำแหน่ง','กลุ่มงาน','วุฒิ','สถาบัน','สาขา','GPA','ประสบการณ์','บริษัทเก่า','ตำแหน่งเก่า','เงินเดือนที่คาดหวัง','ภาษา','ใบรับรอง','คะแนน','สถานะ','วันที่สมัคร','รูปโปรไฟล์'];
+  const NCOL = headers.length;
 
   const headerStyle = 'background:#A50E25;color:white;font-weight:bold;font-size:12px;padding:8px;border:1px solid #7A0919;text-align:center;';
   const cellStyle   = 'font-size:11px;padding:6px 8px;border:1px solid #D0C8C5;';
   const altStyle    = 'background:#F4F2F1;' + cellStyle;
+  // คอลัมน์ที่ต้องบังคับเป็นข้อความ (กัน Excel ตัดเลข 0 หน้า): 0=รหัส, 2=อายุ, 4=เบอร์โทร
+  const textCols = { 0: true, 2: true, 4: true };
+  const scoreColIdx = 18;
 
-  let tableRows = rows.map((row, ri) => `<tr>${row.map((v,ci) => `<td style="${ri%2===0?cellStyle:altStyle}${ci===6?'font-weight:bold;color:#A50E25;text-align:center;':''}">${v}</td>`).join('')}</tr>`).join('');
+  let tableRows = rows.map((row, ri) => `<tr>${row.map((v,ci) => {
+    const base = ri%2===0 ? cellStyle : altStyle;
+    const scoreCol = ci===scoreColIdx ? 'font-weight:bold;color:#A50E25;text-align:center;' : '';
+    const textFmt = textCols[ci] ? "mso-number-format:'\\@';" : '';
+    return `<td style="${base}${scoreCol}${textFmt}">${v}</td>`;
+  }).join('')}</tr>`).join('');
 
   const html = `
   <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
@@ -3253,13 +3272,13 @@ function exportExcel() {
   </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
   </head><body>
   <table>
-    <tr><td colspan="12" class="title">SunGroup Recruitment — รายชื่อผู้สมัครงาน | ออกรายงาน: ${new Date().toLocaleDateString('th-TH')}</td></tr>
+    <tr><td colspan="${NCOL}" class="title">SunGroup Recruitment — รายชื่อผู้สมัครงาน | ออกรายงาน: ${new Date().toLocaleDateString('th-TH')}</td></tr>
     <tr>${headers.map(h=>`<th style="${headerStyle}">${h}</th>`).join('')}</tr>
     ${tableRows}
     <tr>
-      <td colspan="6" style="background:#A50E25;color:white;font-weight:bold;padding:6px 8px;">รวม: ${rows.length} ราย</td>
-      <td style="background:#A50E25;color:white;font-weight:bold;text-align:center;padding:6px;">${rows.length>0?(rows.reduce((s,r)=>s+Number(r[6]),0)/rows.length).toFixed(1):'-'}</td>
-      <td colspan="5" style="background:#A50E25;color:white;padding:6px 8px;">คะแนนเฉลี่ย</td>
+      <td colspan="${scoreColIdx}" style="background:#A50E25;color:white;font-weight:bold;padding:6px 8px;">รวม: ${rows.length} ราย — คะแนนเฉลี่ย</td>
+      <td style="background:#A50E25;color:white;font-weight:bold;text-align:center;padding:6px;">${rows.length>0?(rows.reduce((s,r)=>s+Number(r[scoreColIdx]),0)/rows.length).toFixed(1):'-'}</td>
+      <td colspan="${NCOL-scoreColIdx-1}" style="background:#A50E25;color:white;padding:6px 8px;"></td>
     </tr>
   </table>
   </body></html>`;
