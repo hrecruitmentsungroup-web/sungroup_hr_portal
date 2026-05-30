@@ -595,7 +595,7 @@
   .hex-card {
     background: white;
     border-radius: var(--radius);
-    padding: 24px;
+    padding: 18px;
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
@@ -615,25 +615,26 @@
 
   .hex-name {
     font-family: 'Prompt', sans-serif;
-    font-size: 16px; font-weight: 700;
+    font-size: 13px; font-weight: 700;
     color: var(--gray-800);
     margin-bottom: 2px;
     text-align: center;
+    line-height: 1.25;
   }
 
-  .hex-pos { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; text-align: center; }
+  .hex-pos { font-size: 10px; color: var(--gray-400); margin-bottom: 4px; text-align: center; }
 
   .hex-score-wrap {
-    display: flex; align-items: baseline; gap: 2px; margin-bottom: 12px;
+    display: flex; align-items: baseline; gap: 2px; margin-bottom: 10px;
   }
 
   .hex-score {
     font-family: 'Prompt', sans-serif;
-    font-size: 32px; font-weight: 800;
+    font-size: 24px; font-weight: 800;
     line-height: 1;
   }
 
-  .hex-score-max { font-size: 14px; color: var(--gray-400); }
+  .hex-score-max { font-size: 12px; color: var(--gray-400); }
 
   .hex-skillbars { width: 100%; display: flex; flex-direction: column; gap: 7px; margin-top: 12px; }
 
@@ -644,25 +645,27 @@
   .hbar-val { font-size: 11px; font-weight: 700; color: var(--gray-600); width: 20px; text-align: right; }
 
   .hex-verdict {
-    display: flex; gap: 8px; margin-top: 18px; width: 100%;
+    display: flex; gap: 6px; margin-top: 12px; width: 100%;
   }
 
   .btn-pass {
-    flex: 1; padding: 9px;
+    flex: 1; padding: 7px 6px;
     background: #DCFCE7; color: #15803D;
     border: none; border-radius: var(--radius-sm);
     font-family: 'Sarabun', sans-serif;
-    font-size: 12px; font-weight: 700;
+    font-size: 11px; font-weight: 700;
     cursor: pointer; transition: all 0.2s;
+    line-height: 1.2;
   }
 
   .btn-fail {
-    flex: 1; padding: 9px;
+    flex: 1; padding: 7px 6px;
     background: #FEE2E2; color: #991B1B;
     border: none; border-radius: var(--radius-sm);
     font-family: 'Sarabun', sans-serif;
-    font-size: 12px; font-weight: 700;
+    font-size: 11px; font-weight: 700;
     cursor: pointer; transition: all 0.2s;
+    line-height: 1.2;
   }
 
   .btn-pass:hover { background: #15803D; color: white; }
@@ -1299,31 +1302,23 @@
           </thead>
           <tbody id="tbl-body"></tbody>
         </table>
+        <div id="tbl-pagination" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 4px 4px;flex-wrap:wrap;"></div>
       </div>
     </div>
 
     <!-- ============ PAGE: ANALYSIS ============ -->
     <div class="page" id="page-analysis">
 
-      <!-- TOP COMPARISON -->
-      <div class="compare-panel">
-        <div class="compare-header">
-          <div style="font-family:'Prompt',sans-serif;font-size:16px;font-weight:700">🏆 เปรียบเทียบผู้สมัครคะแนนสูงสุด</div>
-          <div style="font-size:12px;color:var(--gray-400)">Top 3 ผู้สมัครที่ผ่านเกณฑ์คะแนน ≥ 80</div>
-        </div>
-        <div class="compare-radars" id="compare-area"></div>
-      </div>
-
       <!-- FILTER -->
       <div class="hex-controls">
         <div class="filter-chips">
-          <button class="chip active" onclick="hexFilter('all',this)">ทั้งหมด</button>
-          <button class="chip" onclick="hexFilter('วิศวกรรม',this)">⚙️ วิศวกรรม</button>
-          <button class="chip" onclick="hexFilter('การขาย',this)">💼 การขาย</button>
-          <button class="chip" onclick="hexFilter('ฟาร์ม',this)">🐔 ฟาร์ม</button>
-          <button class="chip" onclick="hexFilter('บัญชี',this)">📒 บัญชี</button>
+          <button class="chip active" onclick="hexFilter('pending',this)">⏳ รอพิจารณา</button>
+          <button class="chip" onclick="hexFilter('interview1',this)">📝 สัมภาษณ์รอบ 1</button>
+          <button class="chip" onclick="hexFilter('interview',this)">🎯 นัดสัมภาษณ์</button>
+          <button class="chip" onclick="hexFilter('selected',this)">✅ ผ่าน</button>
+          <button class="chip" onclick="hexFilter('rejected',this)">❌ ไม่ผ่าน</button>
+          <button class="chip" onclick="hexFilter('all',this)">ทั้งหมด</button>
         </div>
-        <div style="font-size:12px;color:var(--gray-400)">คลิก ✓ / ✗ เพื่ออัปเดตสถานะผู้สมัคร</div>
       </div>
 
       <div class="hex-grid" id="hex-grid"></div>
@@ -2055,6 +2050,7 @@ function mapApplicants(rows) {
     submittedAt:  a.submitted_at || a.created_at || null,
     interviewDate: a.interview_date || '',
     interview1Date: a.interview1_date || '',
+    photoUrl:     a.photo_url || '',
   }));
 }
 
@@ -2069,7 +2065,6 @@ async function refreshBadges() {
   renderDashboard();
   renderTable();
   renderHexGrid();
-  renderComparison();
 }
 
 // ===== DASHBOARD =====
@@ -2200,8 +2195,34 @@ const avatarColors = ['#A50E25','#C42236','#1D4ED8','#15803D','#B45309','#7C3AED
 const skillKeys   = ['technical','communication','teamwork','leadership','problem','adaptability'];
 const skillLabels = ['เทคนิค','สื่อสาร','ทีมงาน','ผู้นำ','แก้ปัญหา','ปรับตัว'];
 
+// เรียงจากสมัครล่าสุด -> เก่าสุด (ใช้ submittedAt ก่อน ถ้าเท่ากัน fallback ที่ id มาก->น้อย)
+function sortByLatest(list) {
+  return list.slice().sort((a, b) => {
+    const at = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+    const bt = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+    if (bt !== at) return bt - at;
+    const ai = parseInt((a.id || '').replace(/\D/g,'')) || 0;
+    const bi = parseInt((b.id || '').replace(/\D/g,'')) || 0;
+    return bi - ai;
+  });
+}
+
+// คืน HTML ของ avatar: ใช้รูปจริงถ้ามี photoUrl ไม่งั้น fallback ตัวอักษรย่อ
+function avatarHTML(a, initials, color, size) {
+  const px = size ? size : 0;
+  const sizeStyle = px ? `width:${px}px;height:${px}px;` : '';
+  if (a && a.photoUrl) {
+    return `<div class="mini-avatar" style="${sizeStyle}background:${color};overflow:hidden;padding:0;">`
+      + `<img src="${a.photoUrl}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" `
+      + `onerror="this.parentElement.innerHTML='${initials}'"></div>`;
+  }
+  return `<div class="mini-avatar" style="${sizeStyle}background:${color}">${initials}</div>`;
+}
+
 let tableFilter = 'pending';
 let tableSearch = '';
+let tablePage = 1;
+const TABLE_PAGE_SIZE = 10;
 
 // ===== REAL-TIME DATE =====
 function updateRealtimeDate() {
@@ -2226,6 +2247,7 @@ setInterval(updateRealtimeDate, 1000);
 function goToTable(status) {
   // set filter
   tableFilter = status;
+  tablePage = 1;
   // navigate to table page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -2278,21 +2300,24 @@ function updateChipCounts() {
 function renderTable() {
   updateChipCounts();
   const body = document.getElementById('tbl-body');
-  // เรียงใหม่สุดก่อน (id ลดลง)
-  const data = applicants
-    .filter(a => {
+  // เรียงใหม่สุดก่อน (สมัครล่าสุด -> เก่าสุด)
+  const data = sortByLatest(
+    applicants.filter(a => {
       const matchStatus = tableFilter === 'all' || a.status === tableFilter;
       const matchSearch = !tableSearch || a.name.includes(tableSearch) || a.pos.includes(tableSearch);
       return matchStatus && matchSearch;
     })
-    .slice()
-    .sort((a, b) => {
-      const ai = parseInt((a.id || '').replace(/\D/g,'')) || 0;
-      const bi = parseInt((b.id || '').replace(/\D/g,'')) || 0;
-      return bi - ai;
-    });
+  );
 
-  body.innerHTML = data.map((a, i) => {
+  // ===== Pagination: หั่นทีละ 10 =====
+  const totalItems = data.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / TABLE_PAGE_SIZE));
+  if (tablePage > totalPages) tablePage = totalPages;
+  if (tablePage < 1) tablePage = 1;
+  const startIdx = (tablePage - 1) * TABLE_PAGE_SIZE;
+  const pageData = data.slice(startIdx, startIdx + TABLE_PAGE_SIZE);
+
+  body.innerHTML = pageData.map((a, i) => {
     const globalIdx = applicants.indexOf(a);
     const cleanName = a.name.replace('นาย','').replace('นางสาว','').replace('นาง','').trim();
     const initials = cleanName.charAt(0) || '?';
@@ -2402,7 +2427,7 @@ function renderTable() {
     return `<tr>
       <td>
         <div class="avatar-cell">
-          <div class="mini-avatar" style="background:${avatarColors[i%avatarColors.length]}">${initials}</div>
+          ${avatarHTML(a, initials, avatarColors[i%avatarColors.length])}
           <div>
             <div style="font-weight:700;font-size:13px">${a.name}</div>
             <div style="font-size:11px;color:var(--gray-400)">${a.edu || '-'}</div>
@@ -2428,6 +2453,59 @@ function renderTable() {
     </tr>`;
   }).join('');
 
+  renderPagination(totalItems, totalPages, startIdx, pageData.length);
+}
+
+function renderPagination(totalItems, totalPages, startIdx, shownCount) {
+  const pg = document.getElementById('tbl-pagination');
+  if (!pg) return;
+  if (totalItems === 0) { pg.innerHTML = ''; return; }
+
+  const from = startIdx + 1;
+  const to = startIdx + shownCount;
+
+  // สร้างเลขหน้าแบบมี ... เมื่อหน้าเยอะ
+  let pages = [];
+  const cur = tablePage;
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (cur > 3) pages.push('...');
+    for (let i = Math.max(2, cur - 1); i <= Math.min(totalPages - 1, cur + 1); i++) pages.push(i);
+    if (cur < totalPages - 2) pages.push('...');
+    pages.push(totalPages);
+  }
+
+  const btnBase = 'min-width:36px;height:36px;padding:0 10px;border-radius:9px;border:1.5px solid var(--gray-200);background:white;font-family:Sarabun,sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;';
+  const numBtns = pages.map(p => {
+    if (p === '...') return `<span style="padding:0 4px;color:var(--gray-400);font-weight:700;">…</span>`;
+    const active = p === cur;
+    return `<button onclick="goToPage(${p})" style="${btnBase}${active ? 'background:var(--red);color:white;border-color:var(--red);' : 'color:var(--gray-600);'}">${p}</button>`;
+  }).join('');
+
+  const prevDis = cur <= 1;
+  const nextDis = cur >= totalPages;
+
+  pg.innerHTML = `
+    <div style="font-size:13px;color:var(--gray-500);font-weight:600;">
+      แสดง ${from}–${to} จาก ${totalItems} รายการ
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <button onclick="goToPage(${cur - 1})" ${prevDis ? 'disabled' : ''}
+        style="${btnBase}color:var(--gray-600);${prevDis ? 'opacity:0.4;cursor:not-allowed;' : ''}">‹ ก่อนหน้า</button>
+      ${numBtns}
+      <button onclick="goToPage(${cur + 1})" ${nextDis ? 'disabled' : ''}
+        style="${btnBase}color:var(--gray-600);${nextDis ? 'opacity:0.4;cursor:not-allowed;' : ''}">ถัดไป ›</button>
+    </div>`;
+}
+
+function goToPage(p) {
+  tablePage = p;
+  renderTable();
+  // เลื่อนขึ้นบนสุดของตาราง
+  const tbl = document.querySelector('.data-tbl');
+  if (tbl) tbl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function formatThaiDate(d) {
@@ -2554,6 +2632,7 @@ async function setInterview1Date(idx, val, inputEl) {
 
 function chipFilter(status, btn) {
   tableFilter = status;
+  tablePage = 1;
   document.querySelectorAll('#page-table .chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   // อัปเดต label หัวคอลัมน์ตาม tab
@@ -2625,6 +2704,7 @@ async function verdictApplicant(idx, newStatus, btnEl) {
 
 function searchTable(val) {
   tableSearch = val;
+  tablePage = 1;
   renderTable();
 }
 
@@ -2638,7 +2718,7 @@ function jumpToHex(idx) {
 }
 
 // ===== RADAR SVG =====
-function drawRadar(skills, color, size=180) {
+function drawRadar(skills, color, size=210) {
   const N = 6, R = size * 0.38, cx = size/2, cy = size/2, maxV = 10;
   const getXY = (i, val) => {
     const a = (Math.PI*2*i/N) - Math.PI/2;
@@ -2664,10 +2744,13 @@ function drawRadar(skills, color, size=180) {
   const pts = skillKeys.map((k,i)=>getXY(i, skills[k]||0));
   svg += `<polygon points="${pts.map(p=>`${p.x},${p.y}`).join(' ')}" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>`;
 
-  // dots
-  pts.forEach(p => { svg+=`<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="${color}"/>`; });
+  // dots + ตัวเลขคะแนนที่จุดข้อมูล
+  pts.forEach((p,i) => {
+    svg+=`<circle cx="${p.x}" cy="${p.y}" r="9" fill="${color}" stroke="#fff" stroke-width="1.5"/>`;
+    svg+=`<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#fff" font-family="Sarabun,sans-serif" font-weight="800">${skills[skillKeys[i]]||0}</text>`;
+  });
 
-  // labels
+  // labels (ชื่อทักษะ)
   skillLabels.forEach((l,i) => {
     const p = hexXY(i, R+22);
     svg += `<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#685E59" font-family="Sarabun,sans-serif" font-weight="600">${l}</text>`;
@@ -2678,15 +2761,18 @@ function drawRadar(skills, color, size=180) {
 }
 
 // ===== HEX GRID =====
+let hexFilterStatus = 'pending';
 function renderHexGrid() {
   const grid = document.getElementById('hex-grid');
-  grid.innerHTML = applicants.map((a, idx) => {
-    const color = avatarColors[idx % avatarColors.length];
+  grid.innerHTML = sortByLatest(applicants).map((a, i) => {
+    const idx = applicants.indexOf(a);
+    const color = avatarColors[i % avatarColors.length];
     const cleanName = a.name.replace('นาย','').replace('นางสาว','').replace('นาง','').trim(); const initials = cleanName.charAt(0) || '?';
+    const hidden = (hexFilterStatus !== 'all' && a.status !== hexFilterStatus) ? 'display:none;' : '';
     return `
-    <div class="hex-card" data-group="${a.group}" id="hcard-${idx}">
+    <div class="hex-card" data-group="${a.group}" data-status="${a.status}" id="hcard-${idx}" style="${hidden}">
       <div class="hex-card-accent" style="background:linear-gradient(90deg,${color},${color}88)"></div>
-      <div style="width:48px;height:48px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;margin-bottom:10px">${initials}</div>
+      <div style="width:48px;height:48px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;margin-bottom:10px;overflow:hidden">${a.photoUrl ? `<img src="${a.photoUrl}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='${initials}'">` : initials}</div>
       ${drawRadar(a.skills, color)}
       <div class="hex-name">${a.name}</div>
       <div class="hex-pos">${a.pos || a.position || '-'} · ${a.group || '-'}</div>
@@ -2694,61 +2780,72 @@ function renderHexGrid() {
         <div class="hex-score" style="color:${color}">${a.score}</div>
         <div class="hex-score-max">/100</div>
       </div>
-      <div class="hex-skillbars">
-        ${skillKeys.map((k,i) => `
-          <div class="hbar-row">
-            <div class="hbar-lbl">${skillLabels[i]}</div>
-            <div class="hbar-track"><div class="hbar-fill" style="width:${(a.skills[k]||0)*10}%;background:${color}"></div></div>
-            <div class="hbar-val">${a.skills[k]||0}</div>
-          </div>
-        `).join('')}
-      </div>
       <div class="hex-verdict" id="verdict-${idx}">
-        <button class="btn-pass" onclick="setVerdict(${idx},'selected')">✓ ผ่านสัมภาษณ์</button>
-        <button class="btn-fail" onclick="setVerdict(${idx},'rejected')">✗ ไม่ผ่าน</button>
+        ${hexVerdictButtons(idx, a.status)}
       </div>
     </div>`;
   }).join('');
 }
 
-function hexFilter(group, btn) {
+// ปุ่มในการ์ดวิเคราะห์ เปลี่ยนตามสถานะ (flow เดียวกับหน้าตาราง)
+function hexVerdictButtons(idx, status) {
+  const pass = (next, label) =>
+    `<button class="btn-pass" onclick="hexVerdict(${idx},'${next}')">✓ ${label}</button>`;
+  const fail =
+    `<button class="btn-fail" onclick="hexVerdict(${idx},'rejected')">✗ ไม่ผ่าน</button>`;
+  const back = (label) =>
+    `<button class="btn-fail" style="background:#F4F3F2;color:#6B6560" onclick="hexVerdict(${idx},'pending')">↩ ${label}</button>`;
+
+  if (status === 'pending')    return pass('interview1','ผ่านรอบ 1') + fail;
+  if (status === 'interview1') return pass('interview','นัดสัมภาษณ์') + fail;
+  if (status === 'interview')  return pass('selected','ผ่านคัดเลือก') + fail;
+  if (status === 'selected')
+    return `<div style="font-size:13px;font-weight:700;color:#15803D;text-align:center;width:100%;padding:9px;background:#DCFCE7;border-radius:8px">✅ ผ่านการคัดเลือก</div>`
+      + back('คืนสถานะ');
+  if (status === 'rejected')
+    return `<div style="font-size:13px;font-weight:700;color:#991B1B;text-align:center;width:100%;padding:9px;background:#FEE2E2;border-radius:8px">❌ ไม่ผ่าน</div>`
+      + back('คืนสถานะ');
+  return pass('interview1','ผ่าน') + fail;
+}
+
+function hexFilter(status, btn) {
+  hexFilterStatus = status;
   document.querySelectorAll('#page-analysis .chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.hex-card').forEach(c => {
-    c.style.display = (group === 'all' || c.dataset.group === group) ? 'flex' : 'none';
+    c.style.display = (status === 'all' || c.dataset.status === status) ? 'flex' : 'none';
   });
 }
 
-function setVerdict(idx, status) {
+async function hexVerdict(idx, status) {
+  const a = applicants[idx];
+  if (!a) return;
   applicants[idx].status = status;
-  const db = getDB();
-  if (db && applicants[idx]._dbid) {
-    db.from('applicants').update({ status }).eq('id', applicants[idx]._dbid)
-      .then(({error}) => { if(error) console.warn('update error', error.message); });
-  }
-  renderTable();
-  const v = document.getElementById(`verdict-${idx}`);
-  const label = status === 'selected' ? '✅ ผ่านรอบสัมภาษณ์' : '❌ ไม่ผ่านการคัดเลือก';
-  const bg    = status === 'selected' ? '#DCFCE7' : '#FEE2E2';
-  const col   = status === 'selected' ? '#15803D' : '#991B1B';
-  v.innerHTML = `<div style="font-size:13px;font-weight:700;color:${col};text-align:center;width:100%;padding:9px;background:${bg};border-radius:8px">${label}</div>`;
-  showToast(status==='selected'?'✅':'❌', `${applicants[idx].name}: ${label}`);
-}
 
-// ===== COMPARISON PANEL =====
-function renderComparison() {
-  const top3 = [...applicants].sort((a,b) => b.score - a.score).slice(0,3);
-  const area = document.getElementById('compare-area');
-  area.innerHTML = top3.map((a,i) => {
-    const color = avatarColors[applicants.indexOf(a) % avatarColors.length];
-    return `
-    <div style="text-align:center;flex-shrink:0">
-      ${drawRadar(a.skills, color, 200)}
-      <div style="font-family:'Prompt',sans-serif;font-size:14px;font-weight:700;margin-top:8px">${a.name}</div>
-      <div style="font-size:11px;color:var(--gray-400)">${a.pos}</div>
-      <div style="font-family:'Prompt',sans-serif;font-size:22px;font-weight:800;color:${color}">${a.score}<span style="font-size:12px;color:var(--gray-400)">/100</span></div>
-    </div>`;
-  }).join('');
+  const db = getDB();
+  if (db && a._dbid) {
+    try {
+      const { error } = await db.from('applicants').update({ status }).eq('id', a._dbid);
+      if (error) showToast('⚠️', 'บันทึกชั่วคราว (DB ไม่รับสถานะนี้): ' + error.message);
+    } catch(e) {
+      showToast('⚠️', 'บันทึกชั่วคราว (เชื่อมต่อ DB ไม่ได้)');
+    }
+  }
+
+  const labelMap = {
+    interview1: '📝 ผ่านเข้าสัมภาษณ์รอบ 1',
+    interview:  '🎯 นัดสัมภาษณ์แล้ว',
+    selected:   '✅ ผ่านการคัดเลือก',
+    rejected:   '❌ ไม่ผ่านการคัดเลือก',
+    pending:    '↩ คืนสถานะรอพิจารณา',
+  };
+  const iconMap = { interview1:'📝', interview:'🎯', selected:'✅', rejected:'❌', pending:'↩' };
+  showToast(iconMap[status] || '✓', `${a.name}: ${labelMap[status] || status}`);
+
+  renderTable();
+  renderHexGrid();
+  if (typeof renderDashboard === 'function') renderDashboard();
+  if (typeof updateSyncBadge === 'function') updateSyncBadge();
 }
 
 // ===== DELETE APPLICANT =====
@@ -2791,7 +2888,6 @@ async function doDeleteApplicant() {
   if(el2) el2.textContent = applicants.filter(a=>a.status==='pending').length;
   renderTable();
   renderHexGrid();
-  renderComparison();
   showToast('🗑️', `ลบ "${_delName}" เรียบร้อยแล้ว`);
 }
 
@@ -2875,11 +2971,11 @@ async function loadDailyChanges() {
   // ถ้าไม่มี Supabase หรือไม่มีข้อมูล — ลองหาจาก applicants array ปัจจุบัน
   if (newApplicants.length === 0 && applicants.length > 0) {
     const sinceTs = Date.now() - 24*60*60*1000;
-    newApplicants = applicants.filter(a => {
+    newApplicants = sortByLatest(applicants.filter(a => {
       if (!a.submittedAt) return false;
       const t = new Date(a.submittedAt).getTime();
       return t >= sinceTs;
-    });
+    }));
   }
 
   return newApplicants;
@@ -2932,7 +3028,7 @@ async function openDailyChanges() {
       const submittedDate = a.submittedAt ? new Date(a.submittedAt) : new Date();
       return `
         <div class="dc-item">
-          <div class="dc-avatar">${getInitials(a.name)}</div>
+          <div class="dc-avatar" style="overflow:hidden">${a.photoUrl ? `<img src="${a.photoUrl}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentElement.textContent='${getInitials(a.name)}'">` : getInitials(a.name)}</div>
           <div class="dc-item-info">
             <div class="dc-item-name">${escapeHtmlDC(a.name || '-')}</div>
             <div class="dc-item-meta">
@@ -3061,7 +3157,6 @@ async function handleRealtimeEvent(payload) {
   renderDashboard();
   renderTable();
   renderHexGrid();
-  renderComparison();
   updateSyncBadge();
 }
 
@@ -3073,7 +3168,6 @@ async function silentRefresh() {
   renderDashboard();
   renderTable();
   renderHexGrid();
-  renderComparison();
   updateSyncBadge();
   if (newCount > prevCount) {
     showToast('🔄', `อัปเดตแล้ว — มีผู้สมัครใหม่ ${newCount - prevCount} คน`);
