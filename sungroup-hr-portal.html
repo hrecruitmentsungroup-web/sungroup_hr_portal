@@ -1984,6 +1984,7 @@ async function loadApplicants() {
     // แสดงผลทันทีด้วย batch แรก
     applicants = firstReal;
     renderTable();
+    renderHexGrid();
     renderDashboard();
 
     // โหลด batch ที่เหลือ background (ไม่บล็อก UI)
@@ -2011,12 +2012,15 @@ async function loadRemainingApplicants(alreadyLoaded) {
       const more = mapApplicants(data);
       applicants = [...applicants, ...more];
       renderTable();   // อัปเดต UI เงียบๆ
+      renderHexGrid(); // อัปเดตหน้าวิเคราะห์ทักษะด้วย
       if (data.length < PAGE_SIZE) break; // โหลดครบแล้ว
       from += PAGE_SIZE;
     }
     // อัปเดต badges เมื่อโหลดครบ
     const el1 = document.getElementById('nb-total');
     if (el1) el1.textContent = applicants.length;
+    renderTable();
+    renderHexGrid();
     renderDashboard();
   } catch(e) {
     console.warn('loadRemainingApplicants error:', e.message);
@@ -2061,7 +2065,7 @@ async function refreshBadges() {
   const el1 = document.getElementById('nb-total');
   const el2 = document.getElementById('nb-pending');
   if(el1) el1.textContent = applicants.length;
-  if(el2) el2.textContent = applicants.filter(a=>a.status==='pending').length;
+  if(el2) el2.textContent = applicants.length;
   renderDashboard();
   renderTable();
   renderHexGrid();
@@ -2089,7 +2093,7 @@ function renderDashboard() {
   setText('dash-interview', interview);
   setText('dash-selected',  selected);
   setText('nb-total',       total);
-  setText('nb-pending',     pending);
+  setText('nb-pending',     total);
 
   // Funnel
   const pct = n => Math.max(8, Math.round((n / total) * 100));
@@ -2697,6 +2701,7 @@ async function verdictApplicant(idx, newStatus, btnEl) {
 
   setTimeout(() => {
     renderTable();
+    renderHexGrid();
     renderDashboard();
     updateSyncBadge();
   }, 350);
@@ -2885,7 +2890,7 @@ async function doDeleteApplicant() {
   const el1 = document.getElementById('nb-total');
   const el2 = document.getElementById('nb-pending');
   if(el1) el1.textContent = applicants.length;
-  if(el2) el2.textContent = applicants.filter(a=>a.status==='pending').length;
+  if(el2) el2.textContent = applicants.length;
   renderTable();
   renderHexGrid();
   showToast('🗑️', `ลบ "${_delName}" เรียบร้อยแล้ว`);
@@ -3187,7 +3192,7 @@ function updateSyncBadge() {
   const el = document.getElementById('nb-total');
   if (el) el.textContent = applicants.length;
   const el2 = document.getElementById('nb-pending');
-  if (el2) el2.textContent = applicants.filter(a=>a.status==='pending').length;
+  if (el2) el2.textContent = applicants.length;
 }
 
 // ===== EXPORT EXCEL =====
