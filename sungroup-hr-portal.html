@@ -8,7 +8,9 @@
   <script>
     const SUPA_URL = 'https://skzknrfkhibbpkxqsdjs.supabase.co';
     const SUPA_KEY = 'sb_publishable_GFw-m0mmTRQlBog9j3msaQ_CaFeFrXB';
-    window._supabase = supabase.createClient(SUPA_URL, SUPA_KEY);
+    window._supabase = supabase.createClient(SUPA_URL, SUPA_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sg_hr_auth' }
+    });
     window.dispatchEvent(new Event('supabase-ready'));
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -828,6 +830,29 @@
   }
   .dc-modal-bg.open { display: flex; }
 
+  /* ===== Applicant Detail Modal (ใบสมัครฉบับเต็ม) ===== */
+  #ad-modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:650; align-items:center; justify-content:center; }
+  #ad-modal-bg.open { display:flex; }
+  #ad-modal { background:white; border-radius:20px; padding:28px 32px; width:820px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,0.3); animation:popIn 0.3s ease; }
+  .ad-sec { font-family:'Prompt',sans-serif; font-size:15px; font-weight:800; color:var(--red); margin:20px 0 10px; padding-bottom:6px; border-bottom:2px solid var(--gray-100); }
+  .ad-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:6px 20px; font-size:13px; }
+  .ad-row { display:flex; justify-content:space-between; gap:12px; padding:5px 0; border-bottom:1px dashed var(--gray-100); }
+  .ad-row span { color:var(--gray-500); flex-shrink:0; }
+  .ad-row b { text-align:right; word-break:break-word; }
+  .ad-tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
+  .ad-tbl th { background:var(--gray-100); color:var(--gray-600); padding:7px 8px; text-align:left; border:1px solid var(--gray-200); white-space:nowrap; }
+  .ad-tbl td { padding:6px 8px; border:1px solid var(--gray-200); }
+
+  /* พิมพ์เฉพาะใบสมัครใน modal → เลือก Save as PDF ได้จาก dialog ของเบราว์เซอร์ */
+  @media print {
+    body.printing-ad > *:not(#ad-modal-bg) { display:none !important; }
+    body.printing-ad #ad-modal-bg { display:block !important; position:static; background:none; }
+    body.printing-ad #ad-modal { width:100%; max-width:100%; max-height:none; overflow:visible; box-shadow:none; border-radius:0; padding:0; animation:none; }
+    body.printing-ad .ad-actions { display:none !important; }
+    body.printing-ad .ad-sec { break-after:avoid; }
+    body.printing-ad .ad-tbl tr, body.printing-ad .ad-row { break-inside:avoid; }
+  }
+
   @keyframes dcFadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
@@ -1099,7 +1124,23 @@
 </style>
 </head>
 <body>
-<div class="layout">
+<!-- ===== LOGIN GATE (ต้องล็อกอินก่อนถึงจะเห็น Portal) ===== -->
+<div id="auth-gate" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#7a1420,#3a0a10);display:flex;align-items:center;justify-content:center;">
+  <form id="auth-form" onsubmit="return doLogin(event)" style="background:white;border-radius:20px;padding:40px 36px;width:360px;max-width:92vw;box-shadow:0 32px 80px rgba(0,0,0,0.4);text-align:center;">
+    <div class="login-lock-icon">🔒</div>
+    <div style="font-family:'Prompt',sans-serif;font-size:20px;font-weight:800;color:#7a1420;">SunGroup HR Portal</div>
+    <div style="font-size:13px;color:#888;margin:6px 0 24px;">สำหรับฝ่ายบุคคลเท่านั้น — กรุณาเข้าสู่ระบบ</div>
+    <input id="auth-email" type="email" required placeholder="อีเมล" autocomplete="username"
+      style="width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:12px;border:1.5px solid #ddd;border-radius:10px;font-family:Sarabun,sans-serif;font-size:14px;">
+    <input id="auth-pass" type="password" required placeholder="รหัสผ่าน" autocomplete="current-password"
+      style="width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:16px;border:1.5px solid #ddd;border-radius:10px;font-family:Sarabun,sans-serif;font-size:14px;">
+    <div id="auth-err" style="display:none;background:#FEE2E2;color:#991B1B;border-radius:8px;padding:10px;font-size:13px;font-weight:600;margin-bottom:14px;"></div>
+    <button id="auth-btn" type="submit"
+      style="width:100%;padding:12px;background:#7a1420;color:white;border:none;border-radius:10px;font-family:Sarabun,sans-serif;font-size:15px;font-weight:700;cursor:pointer;">เข้าสู่ระบบ</button>
+  </form>
+</div>
+
+<div class="layout" id="app-layout" style="display:none;">
 
   <!-- ===== SIDEBAR ===== -->
   <aside class="sidebar" id="sidebar">
@@ -1141,6 +1182,7 @@
     </nav>
 
     <div class="sidebar-footer">
+      <button onclick="doLogout()" class="nav-item" style="width:100%;border:none;background:rgba(255,255,255,0.08);cursor:pointer;margin-bottom:12px;font-family:Sarabun,sans-serif;">🚪 ออกจากระบบ</button>
       SunGroup Recruitment v2.0<br>© 2026 All Rights Reserved
     </div>
 
@@ -1488,6 +1530,20 @@
 </div>
 
 <!-- ===== DAILY CHANGES MODAL ===== -->
+<!-- ===== APPLICANT DETAIL MODAL ===== -->
+<div id="ad-modal-bg" onclick="if(event.target===this)closeAppDetail()">
+  <div id="ad-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div style="font-family:'Prompt',sans-serif;font-size:17px;font-weight:800;color:var(--gray-800)">📄 ใบสมัครงาน (FR-HR-01-032)</div>
+      <div style="display:flex;gap:8px;" class="ad-actions">
+        <button onclick="printAppDetail()" style="border:none;background:var(--red);color:white;height:34px;padding:0 16px;border-radius:10px;font-family:Sarabun,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🖨️ พิมพ์ / บันทึก PDF</button>
+        <button onclick="closeAppDetail()" style="border:none;background:var(--gray-100);width:34px;height:34px;border-radius:10px;font-size:16px;cursor:pointer;">✕</button>
+      </div>
+    </div>
+    <div id="ad-body"></div>
+  </div>
+</div>
+
 <div class="dc-modal-bg" id="dc-modal">
   <div class="dc-modal">
     <div class="dc-header">
@@ -2055,7 +2111,160 @@ function mapApplicants(rows) {
     interviewDate: a.interview_date || '',
     interview1Date: a.interview1_date || '',
     photoUrl:     a.photo_url || '',
+    formData:     a.form_data || null,
   }));
+}
+
+// ===== APPLICANT DETAIL — ใบสมัครฉบับเต็มตามฟอร์ม FR-HR-01-032 =====
+const FD_LABELS = {
+  position2:'ตำแหน่งที่สมัคร (อันดับ 2)', work_location:'สถานที่ปฏิบัติงาน', start_date:'วันที่เริ่มงานได้',
+  prefix:'คำนำหน้า', nickname:'ชื่อเล่น', idcard:'เลขบัตรประชาชน', line_id:'ID Line',
+  birthdate:'วัน/เดือน/ปีเกิด', birthplace:'สถานที่เกิด (จังหวัด)', weight:'น้ำหนัก (กก.)', height:'ส่วนสูง (ซม.)',
+  blood:'หมู่เลือด', nationality:'สัญชาติ', race:'เชื้อชาติ', religion:'ศาสนา',
+  marital:'สถานภาพ', military:'สถานภาพทางทหาร', addr_current:'ที่อยู่ที่ติดต่อได้',
+  addr_registered:'ที่อยู่ตามทะเบียนบ้าน', emergency_name:'ผู้ติดต่อกรณีเร่งด่วน',
+  emergency_rel:'ความสัมพันธ์ (เร่งด่วน)', emergency_phone:'โทรศัพท์ (เร่งด่วน)',
+  siblings_count:'จำนวนพี่น้อง (คน)', computer_skills:'ความสามารถด้านคอมพิวเตอร์', job_skills:'ทักษะประจำตำแหน่งงาน',
+  special_knowledge:'ความรู้พิเศษ', sports:'กีฬาที่ชื่นชอบ', hobbies:'งานอดิเรก',
+  vehicle_own:'ยานพาหนะส่วนตัว', vehicle_type:'ประเภทรถ', license:'ใบอนุญาตขับขี่',
+  refer_name:'รู้จักพนักงานในเครือ (ชื่อ)', refer_rel:'ความสัมพันธ์', refer_dept:'แผนก', refer_phone:'โทรศัพท์',
+  health_accident:'เคยอุบัติเหตุเข้ารักษาใน รพ.', health_accident_detail:'รายละเอียดอุบัติเหตุ',
+  health_disease:'ความบกพร่อง/โรคเรื้อรัง', health_disease_detail:'รายละเอียดโรค',
+  apply_reason:'เหตุผลที่สมัครงานกับ SUN GROUP', expectation:'สิ่งที่คาดหวังจาก SUN GROUP',
+};
+
+function adRow(label, val) {
+  if (!val || val === '-') return '';
+  return `<div class="ad-row"><span>${label}</span><b>${escapeHtmlDC(val)}</b></div>`;
+}
+function adTable(title, headers, rows) {
+  const body = rows
+    .filter(r => r.slice(1).some(c => c))  // แถวแรกคือ label ประจำแถว
+    .map(r => `<tr>${r.map(c => `<td>${escapeHtmlDC(c || '-')}</td>`).join('')}</tr>`).join('');
+  if (!body) return '';
+  return `<div class="ad-sec">${title}</div>
+    <div style="overflow-x:auto"><table class="ad-tbl">
+    <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${body}</tbody></table></div>`;
+}
+
+function openAppDetail(idx) {
+  const a = applicants[idx];
+  if (!a) return;
+  const fd = a.formData || {};
+  const g = k => fd[k] || '';
+  const statusMap = { pending:'รอพิจารณา', interview1:'สัมภาษณ์รอบ 1', interview:'นัดสัมภาษณ์', selected:'ผ่านคัดเลือก', rejected:'ไม่ผ่าน' };
+
+  const personalKeys = ['prefix','nickname','idcard','line_id','birthdate','birthplace','weight','height','blood',
+    'nationality','race','religion','marital','military','addr_current','addr_registered',
+    'emergency_name','emergency_rel','emergency_phone'];
+  const otherKeys = ['siblings_count','computer_skills','job_skills','special_knowledge','sports','hobbies',
+    'vehicle_own','vehicle_type','license','refer_name','refer_rel','refer_dept','refer_phone',
+    'health_accident','health_accident_detail','health_disease','health_disease_detail'];
+
+  let html = `
+    <div style="display:flex;gap:16px;align-items:center;margin-bottom:20px;">
+      <div style="width:72px;height:72px;border-radius:16px;overflow:hidden;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:var(--red);flex-shrink:0;">
+        ${a.photoUrl ? `<img src="${a.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : escapeHtmlDC((a.name||'?').replace(/^(นาย|นางสาว|นาง)/,'').trim().charAt(0))}
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:800;">${escapeHtmlDC(a.name)}</div>
+        <div style="font-size:13px;color:var(--gray-500)">${escapeHtmlDC(a.id)} • ${escapeHtmlDC(a.pos)} • ${statusMap[a.status]||a.status}</div>
+      </div>
+    </div>
+
+    <div class="ad-sec">📋 ตำแหน่งงานที่สมัคร</div>
+    <div class="ad-grid">
+      ${adRow('ตำแหน่ง (อันดับ 1)', a.pos)}
+      ${adRow(FD_LABELS.position2, g('position2'))}
+      ${adRow(FD_LABELS.work_location, g('work_location'))}
+      ${adRow(FD_LABELS.start_date, g('start_date'))}
+      ${adRow('เงินเดือนที่ต้องการ', a.salary !== '-' ? a.salary + ' บาท/เดือน' : '')}
+    </div>
+
+    <div class="ad-sec">🪪 ข้อมูลส่วนตัว</div>
+    <div class="ad-grid">
+      ${adRow('อายุ', a.age !== '-' ? a.age + ' ปี' : '')}
+      ${adRow('เพศ', a.gender)}
+      ${adRow('โทรศัพท์', a.phone)}
+      ${adRow('อีเมล', a.email)}
+      ${personalKeys.map(k => adRow(FD_LABELS[k], g(k))).join('')}
+    </div>
+
+    ${adTable('👪 ข้อมูลครอบครัว', ['ความสัมพันธ์','ชื่อ-สกุล','อายุ','อาชีพ','เบอร์โทร'], [
+      ['บิดา', g('fam_father_name'), g('fam_father_age'), g('fam_father_job'), g('fam_father_phone')],
+      ['มารดา', g('fam_mother_name'), g('fam_mother_age'), g('fam_mother_job'), g('fam_mother_phone')],
+      ['พี่น้อง (1)', g('fam_sibling1_name'), g('fam_sibling1_age'), g('fam_sibling1_job'), g('fam_sibling1_phone')],
+      ['พี่น้อง (2)', g('fam_sibling2_name'), g('fam_sibling2_age'), g('fam_sibling2_job'), g('fam_sibling2_phone')],
+      ['คู่สมรส', g('fam_spouse_name'), g('fam_spouse_age'), g('fam_spouse_job'), g('fam_spouse_phone')],
+    ])}
+
+    ${adTable('🎓 ประวัติการศึกษา', ['ระดับ','สถานศึกษา','วุฒิ/สาขา','ปีเริ่ม-จบ','เกรด'], [
+      ['ม.ปลาย/ปวช.', g('edu_hs_school'), g('edu_hs_major'), g('edu_hs_year'), g('edu_hs_gpa')],
+      ['ปวส.', g('edu_dip_school'), g('edu_dip_major'), g('edu_dip_year'), g('edu_dip_gpa')],
+      ['ปริญญาตรี', g('edu_ba_school'), g('edu_ba_major'), g('edu_ba_year'), g('edu_ba_gpa')],
+      ['ปริญญาโท', g('edu_ma_school'), g('edu_ma_major'), g('edu_ma_year'), g('edu_ma_gpa')],
+    ])}
+    <div class="ad-grid">
+      ${adRow('วุฒิสูงสุด', a.edu)}
+      ${adRow('สาขา', a.major)}
+      ${adRow('สถาบัน', a.school)}
+      ${adRow('GPA', a.gpa)}
+    </div>
+
+    <div class="ad-sec">💼 ประสบการณ์ทำงาน</div>
+    <div class="ad-grid">
+      ${adRow('ประสบการณ์รวม', a.exp)}
+      ${adRow('บริษัทล่าสุด', a.lastco)}
+      ${adRow('ตำแหน่งล่าสุด', a.lastpos)}
+    </div>
+    ${adTable('🏢 ประวัติการทำงาน', ['#','ตำแหน่ง','บริษัท','ลักษณะงาน','ช่วงเวลา','ค่าจ้าง','สาเหตุที่ออก'], [
+      ['1', g('work1_pos'), g('work1_co'), g('work1_desc'), g('work1_period'), g('work1_salary'), g('work1_reason')],
+      ['2', g('work2_pos'), g('work2_co'), g('work2_desc'), g('work2_period'), g('work2_salary'), g('work2_reason')],
+      ['3', g('work3_pos'), g('work3_co'), g('work3_desc'), g('work3_period'), g('work3_salary'), g('work3_reason')],
+    ])}
+    ${adTable('📜 ฝึกงาน / ฝึกอบรม', ['#','หลักสูตร','สถาบัน','ช่วงเวลา','ประกาศนียบัตร'], [
+      ['1', g('train1_course'), g('train1_inst'), g('train1_period'), g('train1_cert')],
+      ['2', g('train2_course'), g('train2_inst'), g('train2_period'), g('train2_cert')],
+    ])}
+    ${adTable('📁 Project', ['#','ชื่อ Project','สถานประกอบการ','ผลการดำเนินงาน','ปี พ.ศ.'], [
+      ['1', g('proj1_name'), g('proj1_org'), g('proj1_result'), g('proj1_year')],
+      ['2', g('proj2_name'), g('proj2_org'), g('proj2_result'), g('proj2_year')],
+    ])}
+
+    ${adTable('🌐 ความสามารถด้านภาษา', ['ภาษา','อ่าน','เขียน','พูด'], [
+      [g('lang1_name') || (g('lang1_read')||g('lang1_write')||g('lang1_speak') ? 'ภาษาที่ 1' : ''), g('lang1_read'), g('lang1_write'), g('lang1_speak')],
+      [g('lang2_name') || (g('lang2_read')||g('lang2_write')||g('lang2_speak') ? 'ภาษาที่ 2' : ''), g('lang2_read'), g('lang2_write'), g('lang2_speak')],
+    ])}
+
+    <div class="ad-sec">⭐ ทักษะและอื่นๆ</div>
+    <div class="ad-grid">
+      ${adRow('ภาษาที่สื่อสารได้', a.lang)}
+      ${adRow('ใบรับรอง/เพิ่มเติม', a.cert)}
+      ${otherKeys.map(k => adRow(FD_LABELS[k], g(k))).join('')}
+    </div>
+
+    ${g('apply_reason') || g('expectation') ? `<div class="ad-sec">💭 เหตุผลและความคาดหวัง</div>
+    <div class="ad-grid" style="grid-template-columns:1fr;">
+      ${adRow(FD_LABELS.apply_reason, g('apply_reason'))}
+      ${adRow(FD_LABELS.expectation, g('expectation'))}
+    </div>` : ''}
+
+    ${!a.formData ? '<div style="margin-top:16px;padding:12px 16px;background:#FEF3C7;color:#92400E;border-radius:10px;font-size:13px;font-weight:600;">ℹ️ ใบสมัครนี้ส่งก่อนปรับฟอร์มใหม่ จึงมีเฉพาะข้อมูลสรุป</div>' : ''}
+  `;
+
+  document.getElementById('ad-body').innerHTML = html;
+  document.getElementById('ad-modal-bg').classList.add('open');
+}
+
+function closeAppDetail() {
+  document.getElementById('ad-modal-bg').classList.remove('open');
+}
+
+function printAppDetail() {
+  document.body.classList.add('printing-ad');
+  window.addEventListener('afterprint', () => document.body.classList.remove('printing-ad'), { once: true });
+  window.print();
 }
 
 let applicants = [...mockApplicants];
@@ -2429,7 +2638,7 @@ function renderTable() {
         + '</div></td>';
     }
     return `<tr>
-      <td>
+      <td onclick="openAppDetail(${globalIdx})" style="cursor:pointer" title="คลิกเพื่อดูใบสมัครฉบับเต็ม">
         <div class="avatar-cell">
           ${avatarHTML(a, initials, avatarColors[i%avatarColors.length])}
           <div>
@@ -3097,12 +3306,56 @@ async function updateDailyChangesBadge(count) {
 
 // เปิด Modal ผ่านปุ่มกระดิ่ง (ใช้งานได้แม้กด "ไม่แสดงอีกในวันนี้")
 window.showDailyChanges = openDailyChanges;
-// รอ Supabase ready ก่อน init
-window.addEventListener('supabase-ready', () => {
-  init();
-});
-// fallback ถ้า supabase-ready event ยิงก่อน listener ผูก
-if (window._supabase) { init(); }
+
+// ===== AUTH GATE — ต้องล็อกอิน HR ก่อน init Portal =====
+let _inited = false;
+function enterPortal() {
+  document.getElementById('auth-gate').style.display = 'none';
+  document.getElementById('app-layout').style.display = '';
+  if (!_inited) { _inited = true; init(); }
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('auth-btn');
+  const err = document.getElementById('auth-err');
+  err.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'กำลังเข้าสู่ระบบ…';
+  try {
+    const { error } = await getDB().auth.signInWithPassword({
+      email: document.getElementById('auth-email').value.trim(),
+      password: document.getElementById('auth-pass').value,
+    });
+    if (error) throw error;
+    document.getElementById('auth-pass').value = '';
+    enterPortal();
+  } catch (ex) {
+    err.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ';
+  }
+  return false;
+}
+
+async function doLogout() {
+  try { await getDB().auth.signOut(); } catch(e) {}
+  location.reload();
+}
+window.doLogin = doLogin;
+window.doLogout = doLogout;
+
+// ตรวจ session ตอนโหลด — มี session แล้วเข้าเลย, ไม่มีก็โชว์หน้าล็อกอิน
+async function bootAuth() {
+  const db = getDB();
+  if (!db) return; // ไม่มี Supabase — คงหน้าล็อกอินไว้
+  try {
+    const { data } = await db.auth.getSession();
+    if (data && data.session) enterPortal();
+  } catch(e) { /* โชว์หน้าล็อกอินตามเดิม */ }
+}
+window.addEventListener('supabase-ready', bootAuth);
+if (window._supabase) bootAuth();
 
 // ===== REALTIME SYNC =====
 let _realtimeChannel = null;

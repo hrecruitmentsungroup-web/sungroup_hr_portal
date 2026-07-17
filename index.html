@@ -819,6 +819,13 @@
   .btn-prev:hover { border-color: var(--red); color: var(--red); transform: translateY(-1px); }
 
   /* FORM STEPS */
+  .table-wrap { overflow-x: auto; margin-bottom: 16px; }
+  .mini-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
+  .mini-table th { background: var(--gray-100); color: var(--gray-600); font-weight: 600; padding: 8px 6px; text-align: left; border: 1px solid var(--gray-200); white-space: nowrap; }
+  .mini-table td { border: 1px solid var(--gray-200); padding: 4px; white-space: nowrap; }
+  .mini-table td input, .mini-table td select { width: 100%; min-width: 90px; border: none; background: transparent; padding: 8px 6px; font-size: 13px; font-family: inherit; outline: none; }
+  .mini-table td:first-child { padding: 8px 6px; color: var(--gray-600); font-weight: 500; }
+
   .form-step { display: none; }
   .form-step.active {
     display: block;
@@ -1372,7 +1379,7 @@
       </div>
       <div class="step" id="step-2">
         <div class="step-circle">2</div>
-        <div class="step-label">การศึกษา</div>
+        <div class="step-label">ครอบครัว/การศึกษา</div>
       </div>
       <div class="step" id="step-3">
         <div class="step-circle">3</div>
@@ -1409,38 +1416,10 @@
             <input type="file" id="f-photo" accept="image/*" style="display:none;" onchange="onPhotoSelected(this)">
           </div>
         </div>
+        <div class="form-section-title" style="margin-top:8px;">📋 ตำแหน่งงานที่สมัคร</div>
         <div class="form-grid">
           <div class="form-group">
-            <label>ชื่อ <span class="req">*</span></label>
-            <input type="text" id="f-fname" placeholder="ชื่อจริง">
-          </div>
-          <div class="form-group">
-            <label>นามสกุล <span class="req">*</span></label>
-            <input type="text" id="f-lname" placeholder="นามสกุล">
-          </div>
-          <div class="form-group">
-            <label>อายุ <span class="req">*</span></label>
-            <input type="number" id="f-age" placeholder="อายุ (ปี)" min="18" max="60">
-          </div>
-          <div class="form-group">
-            <label>เพศ <span class="req">*</span></label>
-            <select id="f-gender">
-              <option value="">เลือกเพศ</option>
-              <option>ชาย</option>
-              <option>หญิง</option>
-              <option>ไม่ระบุ</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>โทรศัพท์ <span class="req">*</span></label>
-            <input type="tel" id="f-phone" placeholder="08X-XXX-XXXX">
-          </div>
-          <div class="form-group">
-            <label>อีเมล <span class="req">*</span></label>
-            <input type="email" id="f-email" placeholder="example@email.com">
-          </div>
-          <div class="form-group">
-            <label>ตำแหน่งที่สมัคร <span class="req">*</span></label>
+            <label>ตำแหน่งที่สมัคร (อันดับ 1) <span class="req">*</span></label>
             <select id="f-position">
               <option value="">เลือกตำแหน่ง</option>
               <option>วิศวกรไฟฟ้า (โรงชำแหละ)</option>
@@ -1464,8 +1443,158 @@
             </select>
           </div>
           <div class="form-group">
-            <label>เงินเดือนที่คาดหวัง</label>
+            <label>ตำแหน่งที่สมัคร (อันดับ 2)</label>
+            <input type="text" data-k="position2" placeholder="ตำแหน่งสำรอง (ถ้ามี)">
+          </div>
+          <div class="form-group">
+            <label>สถานที่ปฏิบัติงาน <span class="req">*</span></label>
+            <select data-k="work_location">
+              <option value="">เลือกสถานที่</option>
+              <option>สระบุรี</option>
+              <option>กรุงเทพฯ</option>
+              <option>อื่นๆ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>วันที่สามารถเริ่มงานได้</label>
+            <input type="date" data-k="start_date">
+          </div>
+          <div class="form-group">
+            <label>เงินเดือนที่ต้องการ</label>
             <input type="text" id="f-salary" placeholder="บาท/เดือน">
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:24px;">🪪 ข้อมูลส่วนตัว</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>คำนำหน้า</label>
+            <select data-k="prefix">
+              <option value="">เลือก</option>
+              <option>นาย</option>
+              <option>นางสาว</option>
+              <option>นาง</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>ชื่อ <span class="req">*</span></label>
+            <input type="text" id="f-fname" placeholder="ชื่อจริง">
+          </div>
+          <div class="form-group">
+            <label>นามสกุล <span class="req">*</span></label>
+            <input type="text" id="f-lname" placeholder="นามสกุล">
+          </div>
+          <div class="form-group">
+            <label>ชื่อเล่น</label>
+            <input type="text" data-k="nickname" placeholder="ชื่อเล่น">
+          </div>
+          <div class="form-group">
+            <label>เลขที่บัตรประชาชน <span class="req">*</span></label>
+            <input type="text" data-k="idcard" maxlength="13" inputmode="numeric" placeholder="เลข 13 หลัก">
+          </div>
+          <div class="form-group">
+            <label>โทรศัพท์ <span class="req">*</span></label>
+            <input type="tel" id="f-phone" placeholder="08X-XXX-XXXX">
+          </div>
+          <div class="form-group">
+            <label>อีเมล <span class="req">*</span></label>
+            <input type="email" id="f-email" placeholder="example@email.com">
+          </div>
+          <div class="form-group">
+            <label>ID Line</label>
+            <input type="text" data-k="line_id" placeholder="ไอดีไลน์">
+          </div>
+          <div class="form-group">
+            <label>วัน/เดือน/ปี เกิด</label>
+            <input type="date" data-k="birthdate">
+          </div>
+          <div class="form-group">
+            <label>สถานที่เกิด (จังหวัด)</label>
+            <input type="text" data-k="birthplace" placeholder="จังหวัด">
+          </div>
+          <div class="form-group">
+            <label>อายุ <span class="req">*</span></label>
+            <input type="number" id="f-age" placeholder="อายุ (ปี)" min="18" max="60">
+          </div>
+          <div class="form-group">
+            <label>เพศ <span class="req">*</span></label>
+            <select id="f-gender">
+              <option value="">เลือกเพศ</option>
+              <option>ชาย</option>
+              <option>หญิง</option>
+              <option>ไม่ระบุ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>น้ำหนัก (กก.)</label>
+            <input type="number" data-k="weight" placeholder="กก.">
+          </div>
+          <div class="form-group">
+            <label>ส่วนสูง (ซม.)</label>
+            <input type="number" data-k="height" placeholder="ซม.">
+          </div>
+          <div class="form-group">
+            <label>หมู่เลือด</label>
+            <select data-k="blood">
+              <option value="">เลือก</option>
+              <option>A</option>
+              <option>B</option>
+              <option>AB</option>
+              <option>O</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>สัญชาติ</label>
+            <input type="text" data-k="nationality" placeholder="เช่น ไทย">
+          </div>
+          <div class="form-group">
+            <label>เชื้อชาติ</label>
+            <input type="text" data-k="race" placeholder="เช่น ไทย">
+          </div>
+          <div class="form-group">
+            <label>ศาสนา</label>
+            <input type="text" data-k="religion" placeholder="เช่น พุทธ">
+          </div>
+          <div class="form-group">
+            <label>สถานภาพ</label>
+            <select data-k="marital">
+              <option value="">เลือก</option>
+              <option>โสด</option>
+              <option>สมรส</option>
+              <option>หย่า</option>
+              <option>หม้าย</option>
+              <option>อื่นๆ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>สถานภาพทางทหาร</label>
+            <select data-k="military">
+              <option value="">เลือก</option>
+              <option>เกณฑ์แล้ว</option>
+              <option>ยังไม่ได้เกณฑ์</option>
+              <option>ได้รับการยกเว้น</option>
+              <option>ไม่เกี่ยวข้อง</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>ที่อยู่ที่สามารถติดต่อได้</label>
+            <input type="text" data-k="addr_current" placeholder="บ้านเลขที่ หมู่ ตำบล อำเภอ จังหวัด รหัสไปรษณีย์">
+          </div>
+          <div class="form-group full">
+            <label>ที่อยู่ตามทะเบียนบ้าน</label>
+            <input type="text" data-k="addr_registered" placeholder="บ้านเลขที่ หมู่ ตำบล อำเภอ จังหวัด รหัสไปรษณีย์">
+          </div>
+          <div class="form-group">
+            <label>ผู้ติดต่อกรณีเร่งด่วน (ชื่อ)</label>
+            <input type="text" data-k="emergency_name" placeholder="ชื่อ-สกุล">
+          </div>
+          <div class="form-group">
+            <label>ความสัมพันธ์</label>
+            <input type="text" data-k="emergency_rel" placeholder="เช่น บิดา มารดา">
+          </div>
+          <div class="form-group">
+            <label>โทรศัพท์ (เร่งด่วน)</label>
+            <input type="tel" data-k="emergency_phone" placeholder="เบอร์โทร">
           </div>
         </div>
         <div class="form-nav">
@@ -1474,9 +1603,42 @@
         </div>
       </div>
 
-      <!-- STEP 2: Education -->
+      <!-- STEP 2: Family + Education -->
       <div class="form-step" id="fstep-2">
-        <div class="form-section-title">🎓 การศึกษา</div>
+        <div class="form-section-title">👪 ข้อมูลครอบครัว</div>
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead><tr><th>ความสัมพันธ์</th><th>ชื่อ-สกุล</th><th>อายุ</th><th>อาชีพ/ตำแหน่ง</th><th>เบอร์โทร</th></tr></thead>
+            <tbody>
+              <tr><td>บิดา</td><td><input data-k="fam_father_name"></td><td><input data-k="fam_father_age" type="number"></td><td><input data-k="fam_father_job"></td><td><input data-k="fam_father_phone"></td></tr>
+              <tr><td>มารดา</td><td><input data-k="fam_mother_name"></td><td><input data-k="fam_mother_age" type="number"></td><td><input data-k="fam_mother_job"></td><td><input data-k="fam_mother_phone"></td></tr>
+              <tr><td>พี่น้อง (1)</td><td><input data-k="fam_sibling1_name"></td><td><input data-k="fam_sibling1_age" type="number"></td><td><input data-k="fam_sibling1_job"></td><td><input data-k="fam_sibling1_phone"></td></tr>
+              <tr><td>พี่น้อง (2)</td><td><input data-k="fam_sibling2_name"></td><td><input data-k="fam_sibling2_age" type="number"></td><td><input data-k="fam_sibling2_job"></td><td><input data-k="fam_sibling2_phone"></td></tr>
+              <tr><td>คู่สมรส</td><td><input data-k="fam_spouse_name"></td><td><input data-k="fam_spouse_age" type="number"></td><td><input data-k="fam_spouse_job"></td><td><input data-k="fam_spouse_phone"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="form-grid cols-3" style="margin-bottom:24px;">
+          <div class="form-group">
+            <label>จำนวนพี่น้อง (คน)</label>
+            <input type="number" data-k="siblings_count" min="0" placeholder="จำนวน">
+          </div>
+        </div>
+
+        <div class="form-section-title">🎓 ประวัติการศึกษา</div>
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead><tr><th>ระดับ</th><th>ชื่อสถานศึกษา</th><th>วุฒิที่ได้รับ / สาขา</th><th>ปีเริ่ม-จบ</th><th>เกรดเฉลี่ย</th></tr></thead>
+            <tbody>
+              <tr><td>ม.ปลาย / ปวช.</td><td><input data-k="edu_hs_school"></td><td><input data-k="edu_hs_major"></td><td><input data-k="edu_hs_year" placeholder="เช่น 2558-2560"></td><td><input data-k="edu_hs_gpa"></td></tr>
+              <tr><td>ปวส.</td><td><input data-k="edu_dip_school"></td><td><input data-k="edu_dip_major"></td><td><input data-k="edu_dip_year"></td><td><input data-k="edu_dip_gpa"></td></tr>
+              <tr><td>ปริญญาตรี</td><td><input data-k="edu_ba_school"></td><td><input data-k="edu_ba_major"></td><td><input data-k="edu_ba_year"></td><td><input data-k="edu_ba_gpa"></td></tr>
+              <tr><td>ปริญญาโท</td><td><input data-k="edu_ma_school"></td><td><input data-k="edu_ma_major"></td><td><input data-k="edu_ma_year"></td><td><input data-k="edu_ma_gpa"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-section-title" style="font-size:15px;">สรุปวุฒิการศึกษาสูงสุด</div>
         <div class="form-grid cols-3">
           <div class="form-group">
             <label>วุฒิการศึกษาสูงสุด <span class="req">*</span></label>
@@ -1545,6 +1707,41 @@
             <textarea id="f-summary" placeholder="อธิบายประสบการณ์การทำงานที่ผ่านมา ความสำเร็จ หรือโครงการที่ภูมิใจ..."></textarea>
           </div>
         </div>
+
+        <div class="form-section-title" style="margin-top:24px;">🏢 ประวัติการทำงาน (เรียงจากล่าสุด)</div>
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead><tr><th>ตำแหน่ง</th><th>บริษัท/สถาบัน</th><th>ลักษณะงานที่รับผิดชอบ</th><th>เริ่มต้น-สิ้นสุด</th><th>ค่าจ้าง</th><th>สาเหตุที่ออก</th></tr></thead>
+            <tbody>
+              <tr><td><input data-k="work1_pos"></td><td><input data-k="work1_co"></td><td><input data-k="work1_desc"></td><td><input data-k="work1_period"></td><td><input data-k="work1_salary"></td><td><input data-k="work1_reason"></td></tr>
+              <tr><td><input data-k="work2_pos"></td><td><input data-k="work2_co"></td><td><input data-k="work2_desc"></td><td><input data-k="work2_period"></td><td><input data-k="work2_salary"></td><td><input data-k="work2_reason"></td></tr>
+              <tr><td><input data-k="work3_pos"></td><td><input data-k="work3_co"></td><td><input data-k="work3_desc"></td><td><input data-k="work3_period"></td><td><input data-k="work3_salary"></td><td><input data-k="work3_reason"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-section-title" style="margin-top:24px;">📜 ประวัติการฝึกงาน / ฝึกอบรม / กิจกรรมระหว่างเรียน</div>
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead><tr><th>หลักสูตร</th><th>สถาบัน</th><th>ช่วงเวลา</th><th>ประกาศนียบัตรที่ได้รับ</th></tr></thead>
+            <tbody>
+              <tr><td><input data-k="train1_course"></td><td><input data-k="train1_inst"></td><td><input data-k="train1_period"></td><td><input data-k="train1_cert"></td></tr>
+              <tr><td><input data-k="train2_course"></td><td><input data-k="train2_inst"></td><td><input data-k="train2_period"></td><td><input data-k="train2_cert"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-section-title" style="margin-top:24px;">📁 Project</div>
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead><tr><th>ชื่อ Project</th><th>สถานประกอบการ</th><th>ผลการดำเนินงาน</th><th>ปี พ.ศ.</th></tr></thead>
+            <tbody>
+              <tr><td><input data-k="proj1_name"></td><td><input data-k="proj1_org"></td><td><input data-k="proj1_result"></td><td><input data-k="proj1_year"></td></tr>
+              <tr><td><input data-k="proj2_name"></td><td><input data-k="proj2_org"></td><td><input data-k="proj2_result"></td><td><input data-k="proj2_year"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
         <div class="form-nav">
           <button class="btn-prev" onclick="prevStep(3)">← ย้อนกลับ</button>
           <button class="btn-next" onclick="nextStep(3)">ถัดไป →</button>
@@ -1560,16 +1757,126 @@
           <!-- Skills rendered by JS -->
         </div>
 
-        <div class="form-grid cols-1" style="margin-top:8px;">
+        <div class="form-section-title" style="margin-top:24px;">🌐 ความสามารถด้านภาษา</div>
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead><tr><th>ภาษา</th><th>อ่าน</th><th>เขียน</th><th>พูด</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><input data-k="lang1_name" placeholder="เช่น อังกฤษ"></td>
+                <td><select data-k="lang1_read"><option value=""></option><option>ดี</option><option>พอใช้</option><option>ต้องปรับปรุง</option></select></td>
+                <td><select data-k="lang1_write"><option value=""></option><option>ดี</option><option>พอใช้</option><option>ต้องปรับปรุง</option></select></td>
+                <td><select data-k="lang1_speak"><option value=""></option><option>ดี</option><option>พอใช้</option><option>ต้องปรับปรุง</option></select></td>
+              </tr>
+              <tr>
+                <td><input data-k="lang2_name" placeholder="ภาษาอื่นๆ"></td>
+                <td><select data-k="lang2_read"><option value=""></option><option>ดี</option><option>พอใช้</option><option>ต้องปรับปรุง</option></select></td>
+                <td><select data-k="lang2_write"><option value=""></option><option>ดี</option><option>พอใช้</option><option>ต้องปรับปรุง</option></select></td>
+                <td><select data-k="lang2_speak"><option value=""></option><option>ดี</option><option>พอใช้</option><option>ต้องปรับปรุง</option></select></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-grid" style="margin-top:8px;">
           <div class="form-group">
             <label>ภาษาที่สื่อสารได้</label>
             <input type="text" id="f-lang" placeholder="เช่น ไทย, อังกฤษ, พม่า, กัมพูชา">
           </div>
           <div class="form-group">
+            <label>ความสามารถด้านคอมพิวเตอร์</label>
+            <input type="text" data-k="computer_skills" placeholder="เช่น Excel, AutoCAD, SAP">
+          </div>
+          <div class="form-group">
+            <label>ทักษะประจำตำแหน่งงาน</label>
+            <input type="text" data-k="job_skills" placeholder="ทักษะเฉพาะตำแหน่งที่สมัคร">
+          </div>
+          <div class="form-group">
+            <label>ความรู้พิเศษ</label>
+            <input type="text" data-k="special_knowledge" placeholder="ความรู้พิเศษอื่นๆ">
+          </div>
+          <div class="form-group">
+            <label>กีฬาที่ชื่นชอบ</label>
+            <input type="text" data-k="sports" placeholder="เช่น ฟุตบอล แบดมินตัน">
+          </div>
+          <div class="form-group">
+            <label>งานอดิเรก</label>
+            <input type="text" data-k="hobbies" placeholder="งานอดิเรก">
+          </div>
+          <div class="form-group full">
             <label>ข้อมูลเพิ่มเติม / ใบรับรองที่มี</label>
             <textarea id="f-cert" placeholder="เช่น ใบอนุญาตประกอบวิชาชีพ, Certificate, ผลงานอื่นๆ..."></textarea>
           </div>
         </div>
+
+        <div class="form-section-title" style="margin-top:24px;">🚗 ยานพาหนะและใบอนุญาตขับขี่</div>
+        <div class="form-grid cols-3">
+          <div class="form-group">
+            <label>ยานพาหนะส่วนตัว</label>
+            <select data-k="vehicle_own"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
+          </div>
+          <div class="form-group">
+            <label>ประเภทรถ</label>
+            <input type="text" data-k="vehicle_type" placeholder="เช่น รถยนต์, รถจักรยานยนต์">
+          </div>
+          <div class="form-group">
+            <label>ใบอนุญาตขับขี่</label>
+            <select data-k="license"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:24px;">🤝 ท่านรู้จักพนักงานในเครือ SUNGROUP หรือไม่</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>ชื่อ-สกุล</label>
+            <input type="text" data-k="refer_name" placeholder="เว้นว่างหากไม่รู้จัก">
+          </div>
+          <div class="form-group">
+            <label>ความสัมพันธ์</label>
+            <input type="text" data-k="refer_rel">
+          </div>
+          <div class="form-group">
+            <label>แผนก</label>
+            <input type="text" data-k="refer_dept">
+          </div>
+          <div class="form-group">
+            <label>โทรศัพท์</label>
+            <input type="tel" data-k="refer_phone">
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:24px;">🩺 ข้อมูลสุขภาพ</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>เคยได้รับอุบัติเหตุจนต้องเข้ารักษาในโรงพยาบาลหรือไม่</label>
+            <select data-k="health_accident"><option value="">เลือก</option><option>ไม่เคย</option><option>เคย</option></select>
+          </div>
+          <div class="form-group">
+            <label>ถ้าเคย โปรดระบุ</label>
+            <input type="text" data-k="health_accident_detail">
+          </div>
+          <div class="form-group">
+            <label>มีความบกพร่องของร่างกาย หรือโรคติดต่อเรื้อรังหรือไม่</label>
+            <select data-k="health_disease"><option value="">เลือก</option><option>ไม่มี</option><option>มี</option></select>
+          </div>
+          <div class="form-group">
+            <label>ถ้ามี โปรดระบุ</label>
+            <input type="text" data-k="health_disease_detail">
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:24px;">💭 เหตุผลและความคาดหวัง</div>
+        <div class="form-grid cols-1">
+          <div class="form-group">
+            <label>เหตุผลที่ท่านสมัครงานกับ SUN GROUP</label>
+            <textarea data-k="apply_reason" placeholder="ระบุเหตุผล..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>สิ่งที่ท่านคาดหวังจาก SUN GROUP</label>
+            <textarea data-k="expectation" placeholder="ระบุความคาดหวัง..."></textarea>
+          </div>
+        </div>
+
         <div class="form-nav">
           <button class="btn-prev" onclick="prevStep(4)">← ย้อนกลับ</button>
           <button class="btn-next" onclick="nextStep(4)">ตรวจสอบข้อมูล →</button>
@@ -1580,6 +1887,10 @@
       <div class="form-step" id="fstep-5">
         <div class="form-section-title">✅ ตรวจสอบข้อมูลก่อนส่ง</div>
         <div id="review-content" style="background:var(--gray-100);border-radius:12px;padding:24px;margin-bottom:24px;font-size:14px;line-height:2;"></div>
+        <label style="display:flex;gap:10px;align-items:flex-start;background:#fff8e6;border:1px solid #f0d890;border-radius:12px;padding:16px;margin-bottom:24px;font-size:13px;line-height:1.7;cursor:pointer;">
+          <input type="checkbox" id="f-consent" style="margin-top:4px;flex-shrink:0;">
+          <span>ข้าพเจ้าขอรับรองว่า ข้อความดังกล่าวทั้งหมดในใบสมัครนี้เป็นความจริงทุกประการ หลังจากบริษัทจ้างเข้ามาทำงานแล้วปรากฏว่า ข้อความในใบสมัคร เอกสารที่นำมาแสดง หรือรายละเอียดที่ให้ไว้ไม่เป็นความจริง บริษัทฯ มีสิทธิ์ที่จะเลิกจ้างข้าพเจ้าได้โดยไม่ต้องจ่ายเงินชดเชยหรือค่าเสียหายใดๆ ทั้งสิ้น</span>
+        </label>
         <div class="form-nav">
           <button class="btn-prev" onclick="prevStep(5)">← แก้ไขข้อมูล</button>
           <button class="btn-next" onclick="submitForm()" style="background:var(--success);">📨 ส่งใบสมัคร</button>
@@ -1975,6 +2286,7 @@ function prevStep(n) {
 }
 
 function buildReview() {
+  const extra = collectExtra();
   const vals = {
     fname: document.getElementById('f-fname').value || '-',
     lname: document.getElementById('f-lname').value || '-',
@@ -2001,7 +2313,8 @@ function buildReview() {
       </div>
       <div><strong style="color:var(--red)">🏢 ตำแหน่งที่สมัคร</strong><br>
         ${vals.position}<br>
-        เงินเดือนที่คาดหวัง: ${vals.salary} บาท
+        สถานที่ปฏิบัติงาน: ${extra.work_location || '-'} | เริ่มงานได้: ${extra.start_date || '-'}<br>
+        เงินเดือนที่ต้องการ: ${vals.salary} บาท
       </div>
       <div><strong style="color:var(--red)">🎓 การศึกษา</strong><br>
         วุฒิ: ${vals.edu} | สาขา: ${vals.major}<br>
@@ -2087,7 +2400,21 @@ async function uploadPhoto(appId) {
   }
 }
 
+// รวบรวมทุกช่องกรอกตามฟอร์ม FR-HR-01-032 (input/select/textarea ที่มี data-k)
+function collectExtra() {
+  const o = {};
+  document.querySelectorAll('[data-k]').forEach(el => {
+    const v = (el.value || '').trim();
+    if (v) o[el.dataset.k] = v;
+  });
+  return o;
+}
+
 async function submitForm() {
+  if (!document.getElementById('f-consent').checked) {
+    showToast('⚠️', 'กรุณายอมรับคำรับรองก่อนส่งใบสมัคร');
+    return;
+  }
   const id = Math.floor(Math.random() * 9000 + 1000);
   document.getElementById('app-id').textContent = id;
   document.querySelector('.form-card').style.display = 'none';
@@ -2153,7 +2480,7 @@ async function submitForm() {
   // บันทึกลง Supabase
   try {
     const photoUrl = await uploadPhoto(newApp.id);
-    const { error } = await getDB().from('applicants').insert([{
+    const row = {
       app_id:       newApp.id,
       name:         newApp.name,
       pos:          newApp.pos,
@@ -2176,8 +2503,15 @@ async function submitForm() {
       cert:         newApp.cert,
       skills:       newApp.skills,
       photo_url:    photoUrl,
+      form_data:    collectExtra(),
       submitted_at: new Date().toISOString(),
-    }]);
+    };
+    let { error } = await getDB().from('applicants').insert([row]);
+    // ponytail: ถ้าคอลัมน์ form_data ยังไม่ถูกเพิ่มใน DB ให้บันทึกแบบเดิมก่อน (รัน ALTER TABLE เพื่อแก้ถาวร)
+    if (error && /form_data/.test(error.message)) {
+      delete row.form_data;
+      ({ error } = await getDB().from('applicants').insert([row]));
+    }
     if (error) console.warn('Supabase insert error:', error.message);
   } catch(e) { console.warn('Supabase error', e); }
 
@@ -2195,6 +2529,7 @@ function resetForm() {
     s.querySelector('.step-circle').textContent = i + 1;
   });
   currentStep = 1;
+  document.getElementById('f-consent').checked = false;
   clearPhoto();
 }
 
