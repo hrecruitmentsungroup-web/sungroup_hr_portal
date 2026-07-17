@@ -3358,15 +3358,58 @@ window.addEventListener('supabase-ready', bootAuth);
 if (window._supabase) bootAuth();
 
 // ===== DATA REFRESH =====
-// ดึงข้อมูลใหม่เฉพาะตอนผู้ใช้เปิด/กลับมาดู Portal หรือกดปุ่ม "↻ รีเฟรช" เอง (ไม่มี auto/realtime)
+// อัปเดตอัตโนมัติเมื่อมีใบสมัครใหม่ผ่าน Realtime (ยิงเฉพาะตอนมี event จริง ไม่ poll เปลือง)
+// + กดปุ่ม "↻ รีเฟรช" ดึงเองได้ทุกเมื่อ  (ตัด auto-refresh ทุก 5 นาทีออกแล้ว)
+let _realtimeChannel = null;
+let _isLive = false;
 let _lastRefresh = Date.now();
 
 function startRealtimeSync() {
+  const db = getDB();
+  if (db && db.channel) {
+    try {
+      _realtimeChannel = db
+        .channel('applicants-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'applicants' },
+          (payload) => handleRealtimeEvent(payload))
+        .subscribe((status) => { _isLive = (status === 'SUBSCRIBED'); setSyncBadge(_isLive); });
+    } catch(e) { console.warn('Realtime not available:', e.message); }
+  }
+  // สำรอง: กลับมาที่แท็บแล้วดึงใหม่ (เผื่อ realtime หลุด)
   document.addEventListener('visibilitychange', async () => {
-    if (!document.hidden && Date.now() - _lastRefresh > 30000) {
-      await silentRefresh();
-    }
+    if (!document.hidden && Date.now() - _lastRefresh > 30000) await silentRefresh();
   });
+}
+
+function handleRealtimeEvent(payload) {
+  const { eventType, new: newRow, old: oldRow } = payload;
+  if (eventType === 'INSERT' && newRow) {
+    const m = mapApplicants([newRow]);
+    if (m.length && !applicants.some(a => a._dbid === newRow.id)) {
+      applicants.unshift(m[0]);
+      showToast('🔔', `มีผู้สมัครใหม่: ${m[0].name}`);
+    }
+  } else if (eventType === 'UPDATE' && newRow) {
+    const i = applicants.findIndex(a => a._dbid === newRow.id);
+    if (i !== -1) { const m = mapApplicants([newRow]); if (m.length) applicants[i] = m[0]; }
+  } else if (eventType === 'DELETE' && oldRow) {
+    applicants = applicants.filter(a => a._dbid !== oldRow.id);
+  }
+  renderDashboard();
+  renderTable();
+  renderHexGrid();
+  updateSyncBadge();
+}
+
+function setSyncBadge(isLive) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.innerHTML = isLive
+    ? '<span style="color:#16A34A;font-weight:700">● อัปเดตสด</span>'
+    : '<span style="color:#475569;font-weight:700">↻ รีเฟรช</span>';
+  el.title = isLive
+    ? 'อัปเดตอัตโนมัติเมื่อมีใบสมัครใหม่ — คลิกเพื่อดึงข้อมูลล่าสุด'
+    : 'คลิกเพื่อดึงข้อมูลล่าสุด';
 }
 
 async function silentRefresh() {
@@ -3380,7 +3423,7 @@ async function silentRefresh() {
   renderTable();
   renderHexGrid();
   updateSyncBadge();
-  if (badge) badge.innerHTML = '<span style="color:#475569;font-weight:700">↻ รีเฟรช</span>';
+  setSyncBadge(_isLive);
   if (newCount > prevCount) {
     showToast('🔄', `อัปเดตแล้ว — มีผู้สมัครใหม่ ${newCount - prevCount} คน`);
   }
