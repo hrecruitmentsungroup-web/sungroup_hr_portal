@@ -2055,37 +2055,9 @@
 <div style="position:fixed;bottom:0;left:0;right:0;background:#2A2320;padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:12px;z-index:50;box-shadow:0 -4px 12px rgba(0,0,0,0.15);">
   <span style="font-size:12px;color:rgba(255,255,255,0.35);">SunGroup Recruitment © 2026</span>
   <span style="color:rgba(255,255,255,0.2)">|</span>
-  <a onclick="openHRPortal(event)" href="#" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.75)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
+  <a href="sungroup-hr-portal.html" target="_blank" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.75)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
     🔒 เจ้าหน้าที่ HR
   </a>
-</div>
-
-<!-- HR PORTAL MODAL -->
-<div id="hr-modal-bg" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;">
-  <div style="background:white;border-radius:20px;padding:36px;width:340px;box-shadow:0 32px 80px rgba(0,0,0,0.3);text-align:center;">
-    <div style="font-size:36px;margin-bottom:8px">🔐</div>
-    <div style="font-family:'Prompt',sans-serif;font-size:18px;font-weight:800;color:#2A2320;margin-bottom:4px">HR Portal</div>
-    <div style="font-size:12px;color:#A8A29E;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid #F4F3F2">สำหรับเจ้าหน้าที่ฝ่าย HR เท่านั้น</div>
-    <div id="hr-modal-err" style="display:none;background:#FEE2E2;color:#991B1B;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;margin-bottom:14px;">❌ รหัสผ่านไม่ถูกต้อง</div>
-    <div style="text-align:left;margin-bottom:12px;">
-      <label style="font-size:12px;font-weight:700;color:#6B6560;display:block;margin-bottom:5px">Username</label>
-      <input id="hr-user" type="text" placeholder="กรอก Username" onkeydown="if(event.key==='Enter')checkHR()"
-        style="width:100%;padding:10px 14px;border:2px solid #E8E6E3;border-radius:8px;font-family:Sarabun,sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;"
-        onfocus="this.style.borderColor='#A50E25'" onblur="this.style.borderColor='#E8E6E3'">
-    </div>
-    <div style="text-align:left;margin-bottom:20px;">
-      <label style="font-size:12px;font-weight:700;color:#6B6560;display:block;margin-bottom:5px">Password</label>
-      <input id="hr-pass" type="password" placeholder="กรอก Password" onkeydown="if(event.key==='Enter')checkHR()"
-        style="width:100%;padding:10px 14px;border:2px solid #E8E6E3;border-radius:8px;font-family:Sarabun,sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;"
-        onfocus="this.style.borderColor='#A50E25'" onblur="this.style.borderColor='#E8E6E3'">
-    </div>
-    <div style="display:flex;gap:10px;">
-      <button onclick="document.getElementById('hr-modal-bg').style.display='none'"
-        style="flex:1;padding:11px;background:#F4F3F2;border:none;border-radius:8px;font-family:Sarabun,sans-serif;font-size:14px;font-weight:700;color:#6B6560;cursor:pointer;">ยกเลิก</button>
-      <button onclick="checkHR()"
-        style="flex:2;padding:11px;background:linear-gradient(135deg,#7A0919,#A50E25);color:white;border:none;border-radius:8px;font-family:Sarabun,sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(165,14,37,0.3);">เข้าสู่ระบบ HR →</button>
-    </div>
-  </div>
 </div>
 
 <!-- TOAST -->
@@ -2704,39 +2676,6 @@ window.addEventListener('supabase-ready', () => {
 });
 // fallback ถ้า event ยิงไปแล้ว
 if (window._supabase) { window.supabase = window._supabase; initJobs(); }
-
-// ===== HR PORTAL LINK =====
-function openHRPortal(e) {
-  e.preventDefault();
-  const modal = document.getElementById('hr-modal-bg');
-  modal.style.display = 'flex';
-  document.getElementById('hr-modal-err').style.display = 'none';
-  document.getElementById('hr-user').value = '';
-  document.getElementById('hr-pass').value = '';
-  setTimeout(() => document.getElementById('hr-user').focus(), 100);
-}
-
-// ปิด modal เมื่อคลิก backdrop
-document.getElementById('hr-modal-bg').addEventListener('click', function(e) {
-  if (e.target === this) this.style.display = 'none';
-});
-
-function checkHR() {
-  const user = document.getElementById('hr-user').value.trim().toLowerCase();
-  const pass = document.getElementById('hr-pass').value;
-  const err  = document.getElementById('hr-modal-err');
-  if (user === 'sunfood' && pass === 'hrsunfood') {
-    document.getElementById('hr-modal-bg').style.display = 'none';
-    // บันทึก session ก่อนเปิด HR Portal -- ไม่ต้อง login ซ้ำ
-    sessionStorage.setItem('sg_hr_auth', '1');
-    window.open('sungroup-hr-portal.html', '_blank');
-  } else {
-    err.style.display = 'block';
-    document.getElementById('hr-pass').value = '';
-    document.getElementById('hr-pass').focus();
-    setTimeout(() => err.style.display = 'none', 3000);
-  }
-}
 
 </script>
 </body>
