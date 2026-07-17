@@ -1204,8 +1204,8 @@
       </div>
       <div class="topbar-right">
         <div class="date-badge" id="realtime-date">📅 —</div>
-        <div id="sync-status" style="font-size:12px;padding:4px 10px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:20px;cursor:help" title="สถานะการซิงค์ข้อมูล">
-          <span style="color:#D97706;font-weight:700">◌ Auto</span>
+        <div id="sync-status" onclick="silentRefresh()" style="font-size:12px;padding:4px 10px;background:#F1F5F9;border:1px solid #CBD5E1;border-radius:20px;cursor:pointer" title="คลิกเพื่อดึงข้อมูลล่าสุด">
+          <span style="color:#475569;font-weight:700">↻ รีเฟรช</span>
         </div>
         <button class="dc-bell-btn" onclick="showDailyChanges()" title="สรุปการเปลี่ยนแปลงประจำวัน">
           🔔
@@ -3357,69 +3357,22 @@ async function bootAuth() {
 window.addEventListener('supabase-ready', bootAuth);
 if (window._supabase) bootAuth();
 
-// ===== REALTIME SYNC =====
-let _realtimeChannel = null;
-let _autoRefreshTimer = null;
+// ===== DATA REFRESH =====
+// ดึงข้อมูลใหม่เฉพาะตอนผู้ใช้เปิด/กลับมาดู Portal หรือกดปุ่ม "↻ รีเฟรช" เอง (ไม่มี auto/realtime)
 let _lastRefresh = Date.now();
 
 function startRealtimeSync() {
-  // ---- 1. Supabase Realtime Subscription ----
-  const db = getDB();
-  if (db && db.channel) {
-    try {
-      _realtimeChannel = db
-        .channel('applicants-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'applicants' },
-          (payload) => {
-            console.log('Realtime:', payload.eventType);
-            handleRealtimeEvent(payload);
-          })
-        .subscribe((status) => {
-          updateSyncStatus(status === 'SUBSCRIBED');
-        });
-    } catch(e) {
-      console.warn('Realtime not available:', e.message);
-    }
-  }
-
-  // ---- 2. Auto Refresh ทุก 5 นาที (fallback) ----
-  _autoRefreshTimer = setInterval(async () => {
-    await silentRefresh();
-  }, 5 * 60 * 1000);
-
-  // ---- 3. Refresh เมื่อ tab กลับมา focus ----
   document.addEventListener('visibilitychange', async () => {
-    if (!document.hidden && Date.now() - _lastRefresh > 60000) {
+    if (!document.hidden && Date.now() - _lastRefresh > 30000) {
       await silentRefresh();
     }
   });
 }
 
-async function handleRealtimeEvent(payload) {
-  const { eventType, new: newRow, old: oldRow } = payload;
-  if (eventType === 'INSERT' && newRow) {
-    const mapped = mapApplicants([newRow]);
-    if (mapped.length > 0) {
-      applicants.unshift(mapped[0]);
-      showToast('🔔', `มีผู้สมัครใหม่: ${mapped[0].name}`);
-    }
-  } else if (eventType === 'UPDATE' && newRow) {
-    const idx = applicants.findIndex(a => a._dbid === newRow.id);
-    if (idx !== -1) {
-      const mapped = mapApplicants([newRow]);
-      if (mapped.length > 0) applicants[idx] = mapped[0];
-    }
-  } else if (eventType === 'DELETE' && oldRow) {
-    applicants = applicants.filter(a => a._dbid !== oldRow.id);
-  }
-  renderDashboard();
-  renderTable();
-  renderHexGrid();
-  updateSyncBadge();
-}
-
 async function silentRefresh() {
   _lastRefresh = Date.now();
+  const badge = document.getElementById('sync-status');
+  if (badge) badge.innerHTML = '<span style="color:#475569;font-weight:700">↻ กำลังโหลด…</span>';
   const prevCount = applicants.length;
   applicants = await loadApplicants();
   const newCount = applicants.length;
@@ -3427,18 +3380,10 @@ async function silentRefresh() {
   renderTable();
   renderHexGrid();
   updateSyncBadge();
+  if (badge) badge.innerHTML = '<span style="color:#475569;font-weight:700">↻ รีเฟรช</span>';
   if (newCount > prevCount) {
     showToast('🔄', `อัปเดตแล้ว — มีผู้สมัครใหม่ ${newCount - prevCount} คน`);
   }
-}
-
-function updateSyncStatus(isLive) {
-  const el = document.getElementById('sync-status');
-  if (!el) return;
-  el.innerHTML = isLive
-    ? '<span style="color:#16A34A;font-weight:700">● Live</span>'
-    : '<span style="color:#D97706;font-weight:700">◌ Auto</span>';
-  el.title = isLive ? 'เชื่อมต่อ Realtime' : 'Auto Refresh ทุก 5 นาที';
 }
 
 function updateSyncBadge() {
